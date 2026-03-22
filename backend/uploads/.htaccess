@@ -1,0 +1,11 @@
+# Deny PHP execution in uploads directory
+<FilesMatch "\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Also block .phtml, .php3, .php4, .php5, .phps
+<FilesMatch "\.(phtml|php3|php4|php5|phps)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
