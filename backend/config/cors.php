@@ -4,15 +4,17 @@
 
 function apply_cors_headers(): void
 {
-    $allowedOrigins = [
-        'https://tunisia-phone.vercel.app',
-        'http://localhost:3000',
-    ];
-
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-    if (in_array($origin, $allowedOrigins, true)) {
+    // Allow Vercel deployments and localhost
+    if ($origin && (
+        str_ends_with($origin, '.vercel.app') ||
+        str_starts_with($origin, 'http://localhost')
+    )) {
         header("Access-Control-Allow-Origin: {$origin}");
+    } else {
+        // Fallback: allow all for API access
+        header("Access-Control-Allow-Origin: *");
     }
 
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
