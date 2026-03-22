@@ -9,7 +9,7 @@ import type {
 } from "./types";
 
 const API_HOST =
-  process.env.NEXT_PUBLIC_API_HOST || "http://tunisia-phone.infinityfreeapp.com";
+  process.env.NEXT_PUBLIC_API_HOST || "https://tunisia-phone.infinityfreeapp.com";
 
 // InfinityFree blocks direct /api/ paths, so we use query-string routing
 function buildApiUrl(endpoint: string): string {

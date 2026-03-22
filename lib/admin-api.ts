@@ -1,4 +1,4 @@
-const API_HOST = process.env.NEXT_PUBLIC_API_HOST || 'http://tunisia-phone.infinityfreeapp.com';
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST || 'https://tunisia-phone.infinityfreeapp.com';
 
 function buildAdminApiUrl(endpoint: string): string {
   return `${API_HOST}/index.php?route=/api${endpoint}`;
