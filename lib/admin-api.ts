@@ -1,11 +1,5 @@
-const API_HOST = process.env.NEXT_PUBLIC_API_HOST || 'https://tunisia-phone.infinityfreeapp.com';
-
-function buildAdminApiUrl(endpoint: string): string {
-  return `${API_HOST}/index.php?route=/api${endpoint}`;
-}
-
 async function adminFetch(endpoint: string, options: RequestInit = {}) {
-  const res = await fetch(buildAdminApiUrl(endpoint), {
+  const res = await fetch(`/api${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
