@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 
@@ -20,7 +21,7 @@ export default function Footer() {
               />
             </div>
             <p className="text-sm leading-6 text-gray-400">
-              Votre boutique de confiance pour téléphones et accessoires en Tunisie. Produits de qualité, meilleurs prix, livraison rapide.
+              Votre boutique de confiance pour telephones et accessoires en Tunisie. Produits de qualite, meilleurs prix, livraison rapide.
             </p>
             <div className="flex flex-col gap-2 mt-4 text-sm">
               <div className="flex items-center gap-2">
@@ -42,22 +43,22 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Liens Rapides</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">Accueil</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">À Propos</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Produits</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Accueil</Link></li>
+              <li><Link href="/produits" className="hover:text-white transition-colors">Produits</Link></li>
+              <li><Link href="/commande" className="hover:text-white transition-colors">Commander</Link></li>
+              <li><Link href="/suivi" className="hover:text-white transition-colors">Suivi de commande</Link></li>
             </ul>
           </div>
 
           {/* Categories */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Catégories</h4>
+            <h4 className="text-white font-semibold mb-4">Categories</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">Smartphones</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">AirPods & Écouteurs</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Chargeurs & Câbles</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Coques de Téléphone</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Tablettes</a></li>
+              <li><Link href="/produits?category=telephones" className="hover:text-white transition-colors">Smartphones</Link></li>
+              <li><Link href="/produits?category=airpods" className="hover:text-white transition-colors">AirPods & Ecouteurs</Link></li>
+              <li><Link href="/produits?category=chargeurs" className="hover:text-white transition-colors">Chargeurs & Cables</Link></li>
+              <li><Link href="/produits?category=coques" className="hover:text-white transition-colors">Coques de Telephone</Link></li>
+              <li><Link href="/produits?category=tablettes" className="hover:text-white transition-colors">Tablettes</Link></li>
             </ul>
           </div>
 
@@ -65,16 +66,14 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Service Client</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">Suivi de Commande</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Retours & Échanges</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Infos Livraison</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
+              <li><Link href="/suivi" className="hover:text-white transition-colors">Suivi de Commande</Link></li>
+              <li><Link href="/produits" className="hover:text-white transition-colors">Tous les Produits</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-500">
-          &copy; 2026 Tunisia Phone. Tous droits réservés.
+          &copy; 2026 Tunisia Phone. Tous droits reserves.
         </div>
       </div>
     </footer>

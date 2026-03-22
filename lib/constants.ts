@@ -1,0 +1,28 @@
+export const GOVERNORATES = [
+  "Tunis",
+  "Ariana",
+  "Ben Arous",
+  "Manouba",
+  "Nabeul",
+  "Zaghouan",
+  "Bizerte",
+  "Beja",
+  "Jendouba",
+  "Le Kef",
+  "Siliana",
+  "Kairouan",
+  "Kasserine",
+  "Sidi Bouzid",
+  "Sousse",
+  "Monastir",
+  "Mahdia",
+  "Sfax",
+  "Gafsa",
+  "Tozeur",
+  "Kebili",
+  "Gabes",
+  "Medenine",
+  "Tataouine",
+] as const;
+
+export type Governorate = (typeof GOVERNORATES)[number];
