@@ -18,9 +18,9 @@ export default function TopBar() {
         <div className="hidden md:flex items-center gap-1">
           <span>🎉</span>
           <span>
-            Get <strong>50% off</strong> for selected Items |{" "}
+            Obtenez <strong>50% de réduction</strong> sur les articles sélectionnés |{" "}
             <a href="#" className="underline font-semibold">
-              Buy Now
+              Achetez Maintenant
             </a>
           </span>
         </div>
@@ -28,13 +28,13 @@ export default function TopBar() {
         {/* Right - Selectors */}
         <div className="hidden sm:flex items-center gap-4 text-xs">
           <button className="flex items-center gap-1 hover:opacity-80">
-            🇹🇳 Tunisia <ChevronDown size={12} />
+            🇹🇳 Tunisie <ChevronDown size={12} />
           </button>
           <button className="flex items-center gap-1 hover:opacity-80">
             TND <ChevronDown size={12} />
           </button>
           <button className="flex items-center gap-1 hover:opacity-80">
-            English <ChevronDown size={12} />
+            Français <ChevronDown size={12} />
           </button>
         </div>
       </div>

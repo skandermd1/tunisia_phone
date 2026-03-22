@@ -11,7 +11,7 @@ const products = [
     rating: 4.8,
     reviews: 124,
     image: "/images/hero-1.png",
-    badge: "New",
+    badge: "Nouveau",
   },
   {
     name: "Samsung Galaxy S25 Ultra",
@@ -20,7 +20,7 @@ const products = [
     rating: 4.7,
     reviews: 98,
     image: "/images/hero-2.png",
-    badge: "Hot",
+    badge: "Populaire",
   },
   {
     name: "AirPods Pro 3",
@@ -32,7 +32,7 @@ const products = [
     badge: "-18%",
   },
   {
-    name: "65W GaN Fast Charger",
+    name: "Chargeur Rapide GaN 65W",
     price: "149",
     originalPrice: "249",
     rating: 4.6,
@@ -48,13 +48,13 @@ export default function FeaturedProducts() {
       <div className="max-w-[1280px] mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-            Featured Products
+            Produits en Vedette
           </h2>
           <a
             href="#"
             className="text-sm font-semibold text-gray-900 underline underline-offset-4 hover:text-forest transition-colors"
           >
-            View All
+            Voir Tout
           </a>
         </div>
 

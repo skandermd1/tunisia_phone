@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tunisia Phone - Phones & Accessories Store",
-  description: "Your trusted phone and accessories store in Tunisia. Shop smartphones, AirPods, chargers, cases, and more.",
+  title: "Tunisia Phone - Boutique de Téléphones & Accessoires",
+  description: "Votre boutique de confiance pour téléphones et accessoires en Tunisie. Smartphones, AirPods, chargeurs, coques et plus encore.",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} antialiased`}>
+    <html lang="fr" className={`${inter.variable} antialiased`}>
       <body className="font-sans">{children}</body>
     </html>
   );

@@ -11,13 +11,13 @@ import {
 } from "lucide-react";
 
 const categories = [
-  { name: "Phones", icon: Smartphone, color: "bg-blue-50" },
+  { name: "Téléphones", icon: Smartphone, color: "bg-blue-50" },
   { name: "AirPods", icon: Headphones, color: "bg-purple-50" },
-  { name: "Chargers", icon: BatteryCharging, color: "bg-green-50" },
-  { name: "Cases", icon: ShieldCheck, color: "bg-orange-50" },
-  { name: "Cables", icon: Cable, color: "bg-red-50" },
-  { name: "Watches", icon: Watch, color: "bg-teal-50" },
-  { name: "Tablets", icon: Tablet, color: "bg-yellow-50" },
+  { name: "Chargeurs", icon: BatteryCharging, color: "bg-green-50" },
+  { name: "Coques", icon: ShieldCheck, color: "bg-orange-50" },
+  { name: "Câbles", icon: Cable, color: "bg-red-50" },
+  { name: "Montres", icon: Watch, color: "bg-teal-50" },
+  { name: "Tablettes", icon: Tablet, color: "bg-yellow-50" },
 ];
 
 export default function CategorySection() {
@@ -27,13 +27,13 @@ export default function CategorySection() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-            Choose By Category
+            Choisir par Catégorie
           </h2>
           <a
             href="#"
             className="text-sm font-semibold text-gray-900 underline underline-offset-4 hover:text-forest transition-colors"
           >
-            Browse All
+            Tout Parcourir
           </a>
         </div>
 

@@ -16,37 +16,37 @@ export default function NavBar() {
         {/* Left - All Categories */}
         <button className="flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-forest transition-colors">
           <Menu size={18} />
-          All Categories
+          Toutes les catégories
         </button>
 
         {/* Center - Nav Links */}
         <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
           <a href="#" className="flex items-center gap-1 hover:text-forest transition-colors font-medium text-gray-900">
-            Home <ChevronDown size={14} />
+            Accueil <ChevronDown size={14} />
           </a>
-          <a href="#" className="hover:text-forest transition-colors">About us</a>
-          <a href="#" className="hover:text-forest transition-colors">Product</a>
+          <a href="#" className="hover:text-forest transition-colors">À propos</a>
+          <a href="#" className="hover:text-forest transition-colors">Produits</a>
           <a href="#" className="hover:text-forest transition-colors">Blog</a>
-          <a href="#" className="hover:text-forest transition-colors">Others</a>
+          <a href="#" className="hover:text-forest transition-colors">Autres</a>
         </nav>
 
         {/* Right - Actions */}
         <div className="flex items-center gap-5 text-sm text-gray-600">
           <a href="#" className="hidden sm:flex items-center gap-1.5 hover:text-forest transition-colors">
             <Heart size={16} />
-            Wishlist
+            Favoris
           </a>
           <a href="#" className="hidden sm:flex items-center gap-1.5 hover:text-forest transition-colors">
             <ArrowLeftRight size={16} />
-            Compare
+            Comparer
           </a>
           <a href="#" className="flex items-center gap-1.5 hover:text-forest transition-colors">
             <ShoppingCart size={16} />
-            My Cart
+            Mon Panier
           </a>
           <a href="#" className="flex items-center gap-1.5 hover:text-forest transition-colors">
             <User size={16} />
-            <span className="hidden sm:inline">Login/Register</span>
+            <span className="hidden sm:inline">Connexion/Inscription</span>
           </a>
         </div>
       </div>

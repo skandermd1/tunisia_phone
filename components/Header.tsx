@@ -24,14 +24,14 @@ export default function Header() {
           <div className="flex">
             <input
               type="text"
-              placeholder="What are you looking for"
+              placeholder="Que recherchez-vous"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2.5 border border-gray-300 border-r-0 rounded-l-md text-sm focus:outline-none focus:border-forest"
             />
             <button className="bg-forest hover:bg-forest-light text-white px-5 py-2.5 rounded-r-md flex items-center gap-2 text-sm font-medium shrink-0 transition-colors">
               <Search size={16} />
-              Search
+              Rechercher
             </button>
           </div>
         </div>
@@ -40,15 +40,15 @@ export default function Header() {
         <div className="hidden lg:flex items-center gap-6 text-sm text-gray-600 shrink-0">
           <a href="#" className="flex items-center gap-1.5 hover:text-forest transition-colors">
             <RotateCcw size={16} />
-            Return
+            Retour
           </a>
           <a href="#" className="flex items-center gap-1.5 hover:text-forest transition-colors">
             <CalendarDays size={16} />
-            Order
+            Commande
           </a>
           <a href="#" className="flex items-center gap-1.5 hover:text-forest transition-colors">
             <Truck size={16} />
-            Order Tracking
+            Suivi de commande
           </a>
         </div>
       </div>

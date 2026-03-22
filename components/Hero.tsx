@@ -5,18 +5,18 @@ import { useState, useEffect } from "react";
 
 const slides = [
   {
-    heading: "Premium Phones\n& Accessories",
+    heading: "Téléphones Premium\n& Accessoires",
     description:
-      "Your one-stop shop for the latest smartphones and accessories. From flagship phones to AirPods, chargers, and cases — we have everything you need. Shop now and get it delivered to your door.",
+      "Votre destination unique pour les derniers smartphones et accessoires. Des téléphones haut de gamme aux AirPods, chargeurs et coques — nous avons tout ce qu'il vous faut. Commandez maintenant et faites-vous livrer à domicile.",
     salePrice: "320",
     originalPrice: "550",
     discount: "30%",
     image: "/images/hero-1.png",
   },
   {
-    heading: "Top Brands\n& Best Deals",
+    heading: "Grandes Marques\n& Meilleurs Prix",
     description:
-      "Discover our collection of phones and accessories from Apple, Samsung, Google, and more. Premium quality at the best prices in Tunisia. Free delivery on orders over 200 TND.",
+      "Découvrez notre collection de téléphones et accessoires Apple, Samsung, Google et bien plus. Qualité premium aux meilleurs prix en Tunisie. Livraison gratuite pour les commandes de plus de 200 TND.",
     salePrice: "450",
     originalPrice: "750",
     discount: "40%",
@@ -58,10 +58,10 @@ export default function Hero() {
             </div>
             <div className="mt-6 flex items-center gap-4">
               <button className="bg-forest hover:bg-forest-light text-white px-7 py-3 rounded-md text-sm font-semibold transition-colors">
-                Shop Now
+                Acheter Maintenant
               </button>
               <button className="border-2 border-forest text-forest hover:bg-forest hover:text-white px-7 py-3 rounded-md text-sm font-semibold transition-colors">
-                Explore More
+                Explorer Plus
               </button>
             </div>
           </div>
@@ -70,7 +70,7 @@ export default function Hero() {
           <div className="flex-1 relative min-h-[300px] md:min-h-[400px]">
             <Image
               src={slide.image}
-              alt="Featured phones and accessories"
+              alt="Téléphones et accessoires en vedette"
               fill
               className="object-contain object-center"
               priority
@@ -81,7 +81,7 @@ export default function Hero() {
           {/* Discount Badge */}
           <div className="absolute top-0 right-4 md:top-2 md:right-8 w-20 h-20 bg-gray-900 rounded-full flex flex-col items-center justify-center text-white z-20">
             <span className="text-xl font-bold leading-none">{slide.discount}</span>
-            <span className="text-xs mt-0.5">Off</span>
+            <span className="text-xs mt-0.5">De réduction</span>
           </div>
         </div>
 
