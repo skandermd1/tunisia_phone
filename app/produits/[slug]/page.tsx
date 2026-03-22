@@ -3,7 +3,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
-import { getProduct } from "@/lib/api";
+import { getProductBySlug } from "@/lib/queries";
 import ProductDetailClient from "./ProductDetailClient";
 
 export async function generateMetadata({
@@ -12,15 +12,14 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  try {
-    const product = await getProduct(slug);
-    return {
-      title: `${product.name} - Tunisia Phone`,
-      description: product.description?.slice(0, 160),
-    };
-  } catch {
+  const product = await getProductBySlug(slug);
+  if (!product) {
     return { title: "Produit introuvable - Tunisia Phone" };
   }
+  return {
+    title: `${product.name} - Tunisia Phone`,
+    description: product.description?.slice(0, 160),
+  };
 }
 
 export default async function ProductDetailPage({
@@ -29,13 +28,8 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  let product;
-  try {
-    const res = await getProduct(slug);
-    product = res;
-  } catch {
-    notFound();
-  }
+  const product = await getProductBySlug(slug);
+  if (!product) notFound();
 
   return (
     <>
