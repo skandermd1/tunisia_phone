@@ -22,8 +22,8 @@ export default function ProductListingContent() {
   useEffect(() => {
     Promise.all([getCategories(), getBrands()])
       .then(([catRes, brandRes]) => {
-        setCategories(catRes.data);
-        setBrands(brandRes.data);
+        setCategories(catRes);
+        setBrands(brandRes);
       })
       .catch(() => {
         // Silently handle — filters will be empty
@@ -40,7 +40,7 @@ export default function ProductListingContent() {
 
     getProducts(params)
       .then((res) => {
-        setProducts(res.data);
+        setProducts(res.products);
         setPagination(res.pagination);
       })
       .catch(() => {

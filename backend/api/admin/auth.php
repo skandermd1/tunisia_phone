@@ -54,7 +54,7 @@ json_response([
     'admin'        => [
         'id'           => $admin['id'],
         'username'     => $admin['username'],
-        'display_name' => $admin['display_name'],
+        'name'         => $admin['display_name'],
     ],
     'expires_in'   => JWT_EXPIRY,
 ]);

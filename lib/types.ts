@@ -38,8 +38,9 @@ export interface Product {
   images: string[];
   badge: string | null;
   is_featured: boolean;
-  variants: ProductVariant[];
+  variants?: ProductVariant[];
   min_price?: number;
+  default_price?: number;
 }
 
 export interface OrderItem {
@@ -85,29 +86,19 @@ export interface Pagination {
 }
 
 export interface ProductsResponse {
-  data: Product[];
+  products: Product[];
   pagination: Pagination;
 }
 
-export interface ProductResponse {
-  data: Product;
-}
+export type ProductResponse = Product;
 
-export interface CategoriesResponse {
-  data: Category[];
-}
+export type CategoriesResponse = Category[];
 
-export interface BrandsResponse {
-  data: Brand[];
-}
+export type BrandsResponse = Brand[];
 
 export interface OrderResponse {
-  data: {
-    order_number: string;
-    message: string;
-  };
+  order_number: string;
+  message: string;
 }
 
-export interface OrderTrackingResponse {
-  data: Order;
-}
+export type OrderTrackingResponse = Order;

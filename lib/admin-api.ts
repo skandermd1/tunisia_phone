@@ -22,7 +22,9 @@ async function adminFetch(endpoint: string, options: RequestInit = {}) {
     throw new Error(error.message || `Erreur ${res.status}`);
   }
 
-  return res.json();
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'API error');
+  return json.data;
 }
 
 function authHeaders(token: string) {
@@ -77,7 +79,7 @@ export async function adminGetOrders(
 ): Promise<{ orders: Order[]; total: number; page: number; total_pages: number }> {
   const query = new URLSearchParams();
   if (params?.page) query.set('page', String(params.page));
-  if (params?.limit) query.set('limit', String(params.limit));
+  if (params?.limit) query.set('per_page', String(params.limit));
   if (params?.status) query.set('status', params.status);
   const qs = query.toString();
   return adminFetch(`/admin/orders${qs ? `?${qs}` : ''}`, { headers: authHeaders(token) });
@@ -122,7 +124,8 @@ export interface Product {
 }
 
 export async function adminGetProducts(token: string): Promise<Product[]> {
-  return adminFetch('/admin/products', { headers: authHeaders(token) });
+  const res = await adminFetch('/admin/products', { headers: authHeaders(token) });
+  return res.products;
 }
 
 export async function adminGetProduct(token: string, id: string): Promise<Product> {

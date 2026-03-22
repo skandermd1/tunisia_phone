@@ -35,6 +35,20 @@ if ($slug !== '') {
     // Decode JSON fields
     $product['specs'] = $product['specs'] ? json_decode($product['specs'], true) : null;
     $product['images'] = $product['images'] ? json_decode($product['images'], true) : [];
+    $product['colors'] = $product['colors'] ? json_decode($product['colors'], true) : [];
+
+    // Nest brand and category
+    $product['brand'] = [
+        'id' => $product['brand_id'],
+        'name' => $product['brand_name'],
+        'slug' => $product['brand_slug'],
+    ];
+    $product['category'] = [
+        'id' => $product['category_id'],
+        'name' => $product['category_name'],
+        'slug' => $product['category_slug'],
+    ];
+    unset($product['brand_name'], $product['brand_slug'], $product['category_name'], $product['category_slug']);
 
     // Fetch variants
     $vstmt = $db->prepare("
@@ -120,16 +134,30 @@ $stmt = $db->prepare("
 $stmt->execute($params);
 $products = $stmt->fetchAll();
 
-// Decode JSON fields
+// Decode JSON fields and nest brand/category
 foreach ($products as &$product) {
     $product['images'] = $product['images'] ? json_decode($product['images'], true) : [];
+    $product['colors'] = $product['colors'] ? json_decode($product['colors'], true) : [];
+    $product['brand'] = [
+        'id' => $product['brand_id'] ?? null,
+        'name' => $product['brand_name'],
+        'slug' => $product['brand_slug'],
+    ];
+    $product['category'] = [
+        'id' => $product['category_id'] ?? null,
+        'name' => $product['category_name'],
+        'slug' => $product['category_slug'],
+    ];
+    unset($product['brand_name'], $product['brand_slug'], $product['category_name'], $product['category_slug']);
 }
 unset($product);
 
 json_response([
     'products'    => $products,
-    'total'       => $total,
-    'page'        => $page,
-    'per_page'    => $perPage,
-    'total_pages' => (int) ceil($total / $perPage),
+    'pagination'  => [
+        'total'       => $total,
+        'page'        => $page,
+        'per_page'    => $perPage,
+        'total_pages' => (int) ceil($total / $perPage),
+    ],
 ]);

@@ -15,7 +15,7 @@ export default function ProductDetailClient({
   product: Product;
 }) {
   const defaultVariant =
-    product.variants.find((v) => v.is_default) || product.variants[0];
+    product.variants?.find((v) => v.is_default) || product.variants?.[0];
   const [selectedVariant, setSelectedVariant] =
     useState<ProductVariant | null>(defaultVariant || null);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -161,7 +161,7 @@ export default function ProductDetailClient({
           )}
 
           {/* Variants */}
-          {product.variants.length > 0 && (
+          {product.variants && product.variants.length > 0 && (
             <VariantSelector
               variants={product.variants}
               selectedId={selectedVariant?.id ?? null}

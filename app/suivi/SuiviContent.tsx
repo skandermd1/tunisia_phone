@@ -28,7 +28,7 @@ export default function SuiviContent() {
 
     try {
       const res = await trackOrder(trimmed);
-      setOrder(res.data);
+      setOrder(res);
     } catch {
       setError("Commande introuvable. Verifiez le numero et reessayez.");
     } finally {

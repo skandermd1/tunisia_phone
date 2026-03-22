@@ -13,7 +13,7 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   try {
-    const { data: product } = await getProduct(slug);
+    const product = await getProduct(slug);
     return {
       title: `${product.name} - Tunisia Phone`,
       description: product.description?.slice(0, 160),
@@ -32,7 +32,7 @@ export default async function ProductDetailPage({
   let product;
   try {
     const res = await getProduct(slug);
-    product = res.data;
+    product = res;
   } catch {
     notFound();
   }

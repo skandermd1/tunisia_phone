@@ -49,7 +49,7 @@ foreach ($statusStmt->fetchAll() as $row) {
 json_response([
     'total_orders'    => $totalOrders,
     'pending_orders'  => $pendingOrders,
-    'revenue'         => $revenue,
+    'total_revenue'   => $revenue,
     'total_products'  => $totalProducts,
     'recent_orders'   => $recentOrders,
     'orders_by_status' => $ordersByStatus,

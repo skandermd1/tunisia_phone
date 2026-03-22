@@ -32,7 +32,9 @@ async function fetchAPI<T>(
     );
   }
 
-  return res.json();
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'API error');
+  return json.data as T;
 }
 
 // ── Public endpoints ──
@@ -79,97 +81,3 @@ export async function trackOrder(
   return fetchAPI<OrderTrackingResponse>(`/orders/track/${orderNumber}`);
 }
 
-// ── Admin endpoints ──
-
-function authHeaders(token: string) {
-  return { Authorization: `Bearer ${token}` };
-}
-
-export async function adminLogin(
-  username: string,
-  password: string
-): Promise<{ token: string }> {
-  return fetchAPI<{ token: string }>("/admin/login", {
-    method: "POST",
-    body: JSON.stringify({ username, password }),
-  });
-}
-
-export async function adminGetDashboard(
-  token: string
-): Promise<{ data: Record<string, unknown> }> {
-  return fetchAPI("/admin/dashboard", {
-    headers: authHeaders(token),
-  });
-}
-
-export async function adminGetOrders(
-  token: string,
-  params?: Record<string, string | number>
-): Promise<{ data: unknown[]; pagination: unknown }> {
-  const searchParams = new URLSearchParams();
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== "" && value !== null) {
-        searchParams.set(key, String(value));
-      }
-    });
-  }
-  const query = searchParams.toString();
-  return fetchAPI(`/admin/orders${query ? `?${query}` : ""}`, {
-    headers: authHeaders(token),
-  });
-}
-
-export async function adminUpdateOrderStatus(
-  token: string,
-  id: number,
-  status: string
-): Promise<{ data: unknown }> {
-  return fetchAPI(`/admin/orders/${id}/status`, {
-    method: "PATCH",
-    headers: authHeaders(token),
-    body: JSON.stringify({ status }),
-  });
-}
-
-export async function adminGetProducts(
-  token: string
-): Promise<{ data: unknown[] }> {
-  return fetchAPI("/admin/products", {
-    headers: authHeaders(token),
-  });
-}
-
-export async function adminCreateProduct(
-  token: string,
-  data: unknown
-): Promise<{ data: unknown }> {
-  return fetchAPI("/admin/products", {
-    method: "POST",
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
-}
-
-export async function adminUpdateProduct(
-  token: string,
-  id: number,
-  data: unknown
-): Promise<{ data: unknown }> {
-  return fetchAPI(`/admin/products/${id}`, {
-    method: "PUT",
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
-}
-
-export async function adminDeleteProduct(
-  token: string,
-  id: number
-): Promise<{ message: string }> {
-  return fetchAPI(`/admin/products/${id}`, {
-    method: "DELETE",
-    headers: authHeaders(token),
-  });
-}

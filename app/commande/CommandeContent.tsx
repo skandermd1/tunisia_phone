@@ -30,8 +30,8 @@ export default function CommandeContent() {
 
     getProduct(productSlug)
       .then((res) => {
-        setProduct(res.data);
-        const v = res.data.variants.find(
+        setProduct(res);
+        const v = res.variants?.find(
           (v) => v.id === Number(variantId)
         );
         setVariant(v || null);
@@ -53,7 +53,7 @@ export default function CommandeContent() {
         items: [{ variant_id: variant.id, quantity: 1 }],
       });
       router.push(
-        `/commande/confirmation?order=${encodeURIComponent(res.data.order_number)}`
+        `/commande/confirmation?order=${encodeURIComponent(res.order_number)}`
       );
     } catch {
       setError("Une erreur est survenue. Veuillez reessayer.");

@@ -7,7 +7,10 @@ import type { Product } from "@/lib/types";
 export default function ProductCard({ product }: { product: Product }) {
   const minPrice =
     product.min_price ??
-    Math.min(...product.variants.map((v) => v.price));
+    product.default_price ??
+    (product.variants && product.variants.length > 0
+      ? Math.min(...product.variants.map((v) => v.price))
+      : 0);
 
   return (
     <Link

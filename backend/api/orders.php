@@ -75,115 +75,128 @@ if ($method === 'POST') {
         }
     }
 
-    $db->beginTransaction();
+    // Resolve items first (outside transaction to minimize lock time)
+    $subtotal = 0;
+    $resolvedItems = [];
 
-    try {
-        // Generate order number: TP-YYYYMMDD-XXXX
-        $today = date('Ymd');
-        $countStmt = $db->prepare("
-            SELECT COUNT(*) FROM orders WHERE order_number LIKE :prefix
+    foreach ($data['items'] as $item) {
+        $variantId = (int) $item['variant_id'];
+        $qty = max(1, (int) ($item['quantity'] ?? 1));
+
+        $vstmt = $db->prepare("
+            SELECT pv.id AS variant_id, pv.product_id, pv.price, pv.ram, pv.storage,
+                   pv.storage_unit, pv.stock_status, p.name AS product_name
+            FROM product_variants pv
+            JOIN products p ON p.id = pv.product_id
+            WHERE pv.id = :vid
+            LIMIT 1
         ");
-        $countStmt->execute(['prefix' => "TP-{$today}-%"]);
-        $dayCount = (int) $countStmt->fetchColumn() + 1;
-        $orderNumber = sprintf('TP-%s-%04d', $today, $dayCount);
+        $vstmt->execute(['vid' => $variantId]);
+        $variant = $vstmt->fetch();
 
-        // Resolve items: fetch variant + product info, compute subtotal
-        $subtotal = 0;
-        $resolvedItems = [];
-
-        foreach ($data['items'] as $item) {
-            $variantId = (int) $item['variant_id'];
-            $qty = max(1, (int) ($item['quantity'] ?? 1));
-
-            $vstmt = $db->prepare("
-                SELECT pv.id AS variant_id, pv.product_id, pv.price, pv.ram, pv.storage,
-                       pv.storage_unit, pv.stock_status, p.name AS product_name
-                FROM product_variants pv
-                JOIN products p ON p.id = pv.product_id
-                WHERE pv.id = :vid
-                LIMIT 1
-            ");
-            $vstmt->execute(['vid' => $variantId]);
-            $variant = $vstmt->fetch();
-
-            if (!$variant) {
-                throw new RuntimeException("Variant ID {$variantId} not found");
-            }
-
-            if ($variant['stock_status'] === 'out_of_stock') {
-                throw new RuntimeException("Product \"{$variant['product_name']}\" is out of stock");
-            }
-
-            $variantLabel = trim("{$variant['ram']} / {$variant['storage']}{$variant['storage_unit']}");
-            $lineTotal = (float) $variant['price'] * $qty;
-            $subtotal += $lineTotal;
-
-            $resolvedItems[] = [
-                'product_id'   => $variant['product_id'],
-                'variant_id'   => $variant['variant_id'],
-                'product_name' => $variant['product_name'],
-                'variant_label' => $variantLabel,
-                'price'        => $variant['price'],
-                'quantity'     => $qty,
-            ];
+        if (!$variant) {
+            error_response("Variant ID {$variantId} not found");
         }
 
-        $total = $subtotal; // Can add delivery fees later
-
-        // Insert order
-        $orderStmt = $db->prepare("
-            INSERT INTO orders (order_number, customer_name, customer_phone, customer_address,
-                                customer_city, customer_governorate, notes, subtotal, total)
-            VALUES (:order_number, :name, :phone, :address, :city, :governorate, :notes, :subtotal, :total)
-        ");
-        $orderStmt->execute([
-            'order_number' => $orderNumber,
-            'name'         => trim($data['customer_name']),
-            'phone'        => trim($data['customer_phone']),
-            'address'      => trim($data['customer_address']),
-            'city'         => trim($data['customer_city'] ?? ''),
-            'governorate'  => trim($data['customer_governorate'] ?? ''),
-            'notes'        => trim($data['notes'] ?? ''),
-            'subtotal'     => $subtotal,
-            'total'        => $total,
-        ]);
-
-        $orderId = (int) $db->lastInsertId();
-
-        // Insert order items
-        $itemStmt = $db->prepare("
-            INSERT INTO order_items (order_id, product_id, variant_id, product_name, variant_label, price, quantity)
-            VALUES (:order_id, :product_id, :variant_id, :product_name, :variant_label, :price, :quantity)
-        ");
-
-        foreach ($resolvedItems as $ri) {
-            $itemStmt->execute([
-                'order_id'      => $orderId,
-                'product_id'    => $ri['product_id'],
-                'variant_id'    => $ri['variant_id'],
-                'product_name'  => $ri['product_name'],
-                'variant_label' => $ri['variant_label'],
-                'price'         => $ri['price'],
-                'quantity'      => $ri['quantity'],
-            ]);
+        if ($variant['stock_status'] === 'out_of_stock') {
+            error_response("Product \"{$variant['product_name']}\" is out of stock");
         }
 
-        $db->commit();
+        $variantLabel = trim("{$variant['ram']} / {$variant['storage']}{$variant['storage_unit']}");
+        $lineTotal = (float) $variant['price'] * $qty;
+        $subtotal += $lineTotal;
 
-        json_response([
-            'order_number' => $orderNumber,
-            'total'        => $total,
-            'status'       => 'pending',
-            'items_count'  => count($resolvedItems),
-        ], 201);
-
-    } catch (RuntimeException $e) {
-        $db->rollBack();
-        error_response($e->getMessage());
-    } catch (Throwable $e) {
-        $db->rollBack();
-        error_response('Failed to create order', 500);
+        $resolvedItems[] = [
+            'product_id'   => $variant['product_id'],
+            'variant_id'   => $variant['variant_id'],
+            'product_name' => $variant['product_name'],
+            'variant_label' => $variantLabel,
+            'price'        => $variant['price'],
+            'quantity'     => $qty,
+        ];
     }
+
+    $total = $subtotal; // Can add delivery fees later
+
+    // Retry loop to handle order number race condition (duplicate key)
+    $maxRetries = 3;
+    $lastError = null;
+
+    for ($attempt = 0; $attempt < $maxRetries; $attempt++) {
+        $db->beginTransaction();
+
+        try {
+            // Generate order number: TP-YYYYMMDD-XXXX
+            $today = date('Ymd');
+            $countStmt = $db->prepare("
+                SELECT COUNT(*) FROM orders WHERE order_number LIKE :prefix
+            ");
+            $countStmt->execute(['prefix' => "TP-{$today}-%"]);
+            $dayCount = (int) $countStmt->fetchColumn() + 1;
+            $orderNumber = sprintf('TP-%s-%04d', $today, $dayCount);
+
+            // Insert order
+            $orderStmt = $db->prepare("
+                INSERT INTO orders (order_number, customer_name, customer_phone, customer_address,
+                                    customer_city, customer_governorate, notes, subtotal, total)
+                VALUES (:order_number, :name, :phone, :address, :city, :governorate, :notes, :subtotal, :total)
+            ");
+            $orderStmt->execute([
+                'order_number' => $orderNumber,
+                'name'         => trim($data['customer_name']),
+                'phone'        => trim($data['customer_phone']),
+                'address'      => trim($data['customer_address']),
+                'city'         => trim($data['customer_city'] ?? ''),
+                'governorate'  => trim($data['customer_governorate'] ?? ''),
+                'notes'        => trim($data['notes'] ?? ''),
+                'subtotal'     => $subtotal,
+                'total'        => $total,
+            ]);
+
+            $orderId = (int) $db->lastInsertId();
+
+            // Insert order items
+            $itemStmt = $db->prepare("
+                INSERT INTO order_items (order_id, product_id, variant_id, product_name, variant_label, price, quantity)
+                VALUES (:order_id, :product_id, :variant_id, :product_name, :variant_label, :price, :quantity)
+            ");
+
+            foreach ($resolvedItems as $ri) {
+                $itemStmt->execute([
+                    'order_id'      => $orderId,
+                    'product_id'    => $ri['product_id'],
+                    'variant_id'    => $ri['variant_id'],
+                    'product_name'  => $ri['product_name'],
+                    'variant_label' => $ri['variant_label'],
+                    'price'         => $ri['price'],
+                    'quantity'      => $ri['quantity'],
+                ]);
+            }
+
+            $db->commit();
+
+            json_response([
+                'order_number' => $orderNumber,
+                'total'        => $total,
+                'status'       => 'pending',
+                'items_count'  => count($resolvedItems),
+            ], 201);
+
+        } catch (Throwable $e) {
+            $db->rollBack();
+            $lastError = $e;
+
+            // Check for duplicate key error (SQLSTATE 23000) — retry
+            if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'Duplicate entry')) {
+                continue;
+            }
+
+            // Non-duplicate error — don't retry
+            error_response('Failed to create order', 500);
+        }
+    }
+
+    error_response('Failed to create order after retries', 500);
 }
 
 error_response('Method not allowed', 405);

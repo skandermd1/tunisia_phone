@@ -43,8 +43,8 @@ export default function CategorySection() {
   useEffect(() => {
     getCategories()
       .then((res) => {
-        if (res.data && res.data.length > 0) {
-          setCategories(res.data.map((c: Category) => ({ name: c.name, slug: c.slug, icon: c.icon })));
+        if (res && res.length > 0) {
+          setCategories(res.map((c: Category) => ({ name: c.name, slug: c.slug, icon: c.icon })));
         }
       })
       .catch(() => {

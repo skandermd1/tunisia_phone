@@ -13,7 +13,7 @@ export default function FeaturedProducts() {
 
   useEffect(() => {
     getProducts({ featured: 1, per_page: 8 })
-      .then((res) => setProducts(res.data))
+      .then((res) => setProducts(res.products))
       .catch(() => setProducts([]))
       .finally(() => setLoading(false));
   }, []);

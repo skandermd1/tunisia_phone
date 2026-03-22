@@ -36,6 +36,7 @@ $routes = [
     '/api/orders'      => __DIR__ . '/api/orders.php',
 
     // Admin endpoints
+    '/api/admin/login'     => __DIR__ . '/api/admin/auth.php',
     '/api/admin/auth'      => __DIR__ . '/api/admin/auth.php',
     '/api/admin/products'  => __DIR__ . '/api/admin/products.php',
     '/api/admin/orders'    => __DIR__ . '/api/admin/orders.php',
