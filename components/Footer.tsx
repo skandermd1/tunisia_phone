@@ -16,7 +16,7 @@ export default function Footer() {
                 alt="Tunisia Phone - Mobile & Accessoires"
                 width={200}
                 height={50}
-                className="h-12 w-auto invert mix-blend-screen"
+                className="h-12 w-auto invert"
               />
             </div>
             <p className="text-sm leading-6 text-gray-400">

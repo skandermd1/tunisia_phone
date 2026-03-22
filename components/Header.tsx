@@ -17,7 +17,7 @@ export default function Header() {
             alt="Tunisia Phone - Mobile & Accessoires"
             width={200}
             height={50}
-            className="h-10 sm:h-12 w-auto mix-blend-multiply"
+            className="h-10 sm:h-12 w-auto"
             priority
           />
         </a>
