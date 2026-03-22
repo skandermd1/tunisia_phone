@@ -32,6 +32,7 @@ export async function GET(
       order_number: order.orderNumber,
       customer_name: order.customerName,
       customer_phone: order.customerPhone,
+      customer_email: order.customerEmail,
       customer_address: order.customerAddress,
       customer_city: order.customerCity,
       customer_governorate: order.customerGovernorate,

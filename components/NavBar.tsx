@@ -4,13 +4,14 @@ import Link from "next/link";
 import {
   Menu,
   ChevronDown,
-  Heart,
   ArrowLeftRight,
   ShoppingCart,
-  User,
 } from "lucide-react";
+import { useCart } from "@/lib/cart-context";
 
 export default function NavBar() {
+  const { itemCount } = useCart();
+
   return (
     <div className="bg-white border-b border-gray-200">
       <div className="max-w-[1280px] mx-auto px-4 flex items-center justify-between h-12">
@@ -39,21 +40,18 @@ export default function NavBar() {
         {/* Right - Actions */}
         <div className="flex items-center gap-5 text-sm text-gray-600">
           <Link href="/produits" className="hidden sm:flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
-            <Heart size={16} />
-            Favoris
-          </Link>
-          <Link href="/produits" className="hidden sm:flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
             <ArrowLeftRight size={16} />
             Comparer
           </Link>
-          <Link href="/commande" className="flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
+          <Link href="/panier" className="relative flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
             <ShoppingCart size={16} />
             Mon Panier
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-3 bg-forest text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full">
+                {itemCount > 99 ? "99+" : itemCount}
+              </span>
+            )}
           </Link>
-          <a href="#" className="flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
-            <User size={16} />
-            <span className="hidden sm:inline">Connexion/Inscription</span>
-          </a>
         </div>
       </div>
     </div>

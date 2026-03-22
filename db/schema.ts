@@ -124,6 +124,7 @@ export const orders = pgTable(
     orderNumber: varchar("order_number", { length: 20 }).notNull().unique(),
     customerName: varchar("customer_name", { length: 100 }).notNull(),
     customerPhone: varchar("customer_phone", { length: 20 }).notNull(),
+    customerEmail: varchar("customer_email", { length: 255 }),
     customerAddress: text("customer_address").notNull(),
     customerCity: varchar("customer_city", { length: 100 }),
     customerGovernorate: varchar("customer_governorate", { length: 100 }),

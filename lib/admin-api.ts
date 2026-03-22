@@ -54,6 +54,7 @@ export interface Order {
   order_number: string;
   customer_name: string;
   customer_phone: string;
+  customer_email?: string;
   total: number;
   status: string;
   created_at: string;

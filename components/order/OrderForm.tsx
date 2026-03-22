@@ -5,6 +5,7 @@ import { GOVERNORATES } from "@/lib/constants";
 
 export interface OrderFormData {
   customer_name: string;
+  customer_email: string;
   customer_phone: string;
   customer_address: string;
   customer_city: string;
@@ -20,6 +21,7 @@ interface OrderFormProps {
 export default function OrderForm({ onSubmit, loading }: OrderFormProps) {
   const [form, setForm] = useState<OrderFormData>({
     customer_name: "",
+    customer_email: "",
     customer_phone: "",
     customer_address: "",
     customer_city: "",
@@ -33,6 +35,12 @@ export default function OrderForm({ onSubmit, loading }: OrderFormProps) {
 
     if (!form.customer_name.trim()) {
       newErrors.customer_name = "Le nom est requis";
+    }
+    if (
+      !form.customer_email.trim() ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.customer_email.trim())
+    ) {
+      newErrors.customer_email = "Adresse email invalide";
     }
     if (!/^\d{8}$/.test(form.customer_phone.trim())) {
       newErrors.customer_phone = "Numero de telephone invalide (8 chiffres)";
@@ -96,6 +104,23 @@ export default function OrderForm({ onSubmit, loading }: OrderFormProps) {
         />
         {errors.customer_name && (
           <p className="text-xs text-red-500 mt-1">{errors.customer_name}</p>
+        )}
+      </div>
+
+      {/* Email */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Email *
+        </label>
+        <input
+          type="email"
+          value={form.customer_email}
+          onChange={(e) => update("customer_email", e.target.value)}
+          className={inputClass("customer_email")}
+          placeholder="votre@email.com"
+        />
+        {errors.customer_email && (
+          <p className="text-xs text-red-500 mt-1">{errors.customer_email}</p>
         )}
       </div>
 
