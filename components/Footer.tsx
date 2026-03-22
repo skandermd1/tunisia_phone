@@ -1,6 +1,7 @@
 "use client";
 
 import { Phone, Mail, MapPin } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -9,11 +10,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-forest rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">TP</span>
-              </div>
-              <span className="text-lg font-bold text-white">Tunisia Phone</span>
+            <div className="mb-4">
+              <Image
+                src="/images/logo.png"
+                alt="Tunisia Phone - Mobile & Accessoires"
+                width={200}
+                height={50}
+                className="h-12 w-auto rounded"
+              />
             </div>
             <p className="text-sm leading-6 text-gray-400">
               Votre boutique de confiance pour téléphones et accessoires en Tunisie. Produits de qualité, meilleurs prix, livraison rapide.

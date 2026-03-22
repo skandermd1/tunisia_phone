@@ -11,13 +11,13 @@ import {
 } from "lucide-react";
 
 const categories = [
-  { name: "Téléphones", icon: Smartphone, color: "bg-blue-50" },
-  { name: "AirPods", icon: Headphones, color: "bg-purple-50" },
-  { name: "Chargeurs", icon: BatteryCharging, color: "bg-green-50" },
-  { name: "Coques", icon: ShieldCheck, color: "bg-orange-50" },
-  { name: "Câbles", icon: Cable, color: "bg-red-50" },
-  { name: "Montres", icon: Watch, color: "bg-teal-50" },
-  { name: "Tablettes", icon: Tablet, color: "bg-yellow-50" },
+  { name: "Téléphones", icon: Smartphone, color: "bg-gray-100" },
+  { name: "AirPods", icon: Headphones, color: "bg-gray-100" },
+  { name: "Chargeurs", icon: BatteryCharging, color: "bg-gray-100" },
+  { name: "Coques", icon: ShieldCheck, color: "bg-gray-100" },
+  { name: "Câbles", icon: Cable, color: "bg-gray-100" },
+  { name: "Montres", icon: Watch, color: "bg-gray-100" },
+  { name: "Tablettes", icon: Tablet, color: "bg-gray-100" },
 ];
 
 export default function CategorySection() {

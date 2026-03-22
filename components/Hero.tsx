@@ -76,12 +76,11 @@ export default function Hero() {
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-          </div>
-
-          {/* Discount Badge */}
-          <div className="absolute top-0 right-4 md:top-2 md:right-8 w-20 h-20 bg-gray-900 rounded-full flex flex-col items-center justify-center text-white z-20">
-            <span className="text-xl font-bold leading-none">{slide.discount}</span>
-            <span className="text-xs mt-0.5">De réduction</span>
+            {/* Discount Badge */}
+            <div className="absolute top-2 right-2 md:-top-2 md:right-8 w-16 h-16 md:w-20 md:h-20 bg-gray-900 rounded-full flex flex-col items-center justify-center text-white z-20">
+              <span className="text-lg md:text-xl font-bold leading-none">{slide.discount}</span>
+              <span className="text-[10px] md:text-xs mt-0.5">De réduction</span>
+            </div>
           </div>
         </div>
 

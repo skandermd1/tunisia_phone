@@ -2,6 +2,7 @@
 
 import { RotateCcw, CalendarDays, Truck, Search } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -10,13 +11,15 @@ export default function Header() {
     <div className="bg-white border-b border-gray-100">
       <div className="max-w-[1280px] mx-auto px-4 flex items-center justify-between h-[72px] gap-4">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 bg-forest rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">TP</span>
-          </div>
-          <span className="text-xl font-bold text-gray-900 hidden sm:block">
-            Tunisia Phone
-          </span>
+        <a href="/" className="shrink-0">
+          <Image
+            src="/images/logo.png"
+            alt="Tunisia Phone - Mobile & Accessoires"
+            width={200}
+            height={50}
+            className="h-10 sm:h-12 w-auto"
+            priority
+          />
         </a>
 
         {/* Search Bar */}
@@ -31,22 +34,22 @@ export default function Header() {
             />
             <button className="bg-forest hover:bg-forest-light text-white px-5 py-2.5 rounded-r-md flex items-center gap-2 text-sm font-medium shrink-0 transition-colors">
               <Search size={16} />
-              Rechercher
+              <span className="hidden sm:inline">Rechercher</span>
             </button>
           </div>
         </div>
 
         {/* Right Links */}
         <div className="hidden lg:flex items-center gap-6 text-sm text-gray-600 shrink-0">
-          <a href="#" className="flex items-center gap-1.5 hover:text-forest transition-colors">
+          <a href="#" className="flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
             <RotateCcw size={16} />
             Retour
           </a>
-          <a href="#" className="flex items-center gap-1.5 hover:text-forest transition-colors">
+          <a href="#" className="flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
             <CalendarDays size={16} />
             Commande
           </a>
-          <a href="#" className="flex items-center gap-1.5 hover:text-forest transition-colors">
+          <a href="#" className="flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
             <Truck size={16} />
             Suivi de commande
           </a>
