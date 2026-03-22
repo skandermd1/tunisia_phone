@@ -1,8 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 // Front controller — routes all /api/* requests to handler files
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
 require_once __DIR__ . '/config/cors.php';
 require_once __DIR__ . '/helpers/response.php';
@@ -19,10 +19,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Parse the request URI
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Strip base path (e.g., /backend or /api prefix depending on server config)
-// Normalize: remove trailing slash, ensure leading slash
-$basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-$path = substr($uri, strlen($basePath));
+// Support multiple routing methods:
+// 1. Query string: ?route=/api/brands (most compatible)
+// 2. PATH_INFO: /index.php/api/brands
+// 3. Rewrite: /api/brands (via .htaccess)
+if (isset($_GET['route'])) {
+    $path = $_GET['route'];
+} elseif (isset($_SERVER['PATH_INFO'])) {
+    $path = $_SERVER['PATH_INFO'];
+} else {
+    $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+    $path = substr($uri, strlen($basePath));
+    $path = preg_replace('#^/index\.php#', '', $path);
+}
 $path = '/' . trim($path, '/');
 
 $method = $_SERVER['REQUEST_METHOD'];

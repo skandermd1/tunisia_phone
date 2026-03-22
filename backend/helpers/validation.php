@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /**
  * Validate that all required fields are present and non-empty in the data array.

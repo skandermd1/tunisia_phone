@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /**
  * Base64url encode (RFC 7515).

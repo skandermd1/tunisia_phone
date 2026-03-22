@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 // Copy this file to database.php and fill in your credentials.
 

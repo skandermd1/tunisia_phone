@@ -1,7 +1,11 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST || 'http://tunisia-phone.infinityfreeapp.com';
+
+function buildAdminApiUrl(endpoint: string): string {
+  return `${API_HOST}/index.php?route=/api${endpoint}`;
+}
 
 async function adminFetch(endpoint: string, options: RequestInit = {}) {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetch(buildAdminApiUrl(endpoint), {
     ...options,
     headers: {
       'Content-Type': 'application/json',

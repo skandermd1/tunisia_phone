@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 /**
  * Send a JSON success response and exit.

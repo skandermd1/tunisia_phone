@@ -8,14 +8,19 @@ import type {
   OrderTrackingResponse,
 } from "./types";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const API_HOST =
+  process.env.NEXT_PUBLIC_API_HOST || "http://tunisia-phone.infinityfreeapp.com";
+
+// InfinityFree blocks direct /api/ paths, so we use query-string routing
+function buildApiUrl(endpoint: string): string {
+  return `${API_HOST}/index.php?route=/api${endpoint}`;
+}
 
 async function fetchAPI<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  const url = `${BASE_URL}${endpoint}`;
+  const url = buildApiUrl(endpoint);
   const res = await fetch(url, {
     headers: {
       "Content-Type": "application/json",

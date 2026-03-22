@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 function apply_cors_headers(): void
 {

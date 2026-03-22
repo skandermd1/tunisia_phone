@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+
 
 // Copy this file to constants.php and set your own secret.
 
