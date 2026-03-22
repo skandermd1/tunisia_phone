@@ -50,6 +50,7 @@ export interface OrderItem {
 
 export interface OrderPayload {
   customer_name: string;
+  customer_email: string;
   customer_phone: string;
   customer_address: string;
   customer_city: string;
@@ -71,6 +72,7 @@ export interface Order {
   id: number;
   order_number: string;
   customer_name: string;
+  customer_email?: string;
   customer_phone: string;
   customer_address: string;
   status: string;

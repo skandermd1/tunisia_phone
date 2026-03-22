@@ -14,11 +14,16 @@ export async function POST(request: Request) {
     const data = await getJsonBody(request);
 
     const missing = validateRequired(
-      ["customer_name", "customer_phone", "customer_address", "items"],
+      ["customer_name", "customer_email", "customer_phone", "customer_address", "items"],
       data
     );
     if (missing.length > 0) {
       return errorResponse(`Missing required fields: ${missing.join(", ")}`);
+    }
+
+    const email = String(data.customer_email).trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return errorResponse("Invalid email address");
     }
 
     if (!validatePhone(data.customer_phone as string)) {
@@ -112,6 +117,7 @@ export async function POST(request: Request) {
           .values({
             orderNumber,
             customerName: String(data.customer_name).trim(),
+            customerEmail: String(data.customer_email).trim(),
             customerPhone: String(data.customer_phone).trim(),
             customerAddress: String(data.customer_address).trim(),
             customerCity: data.customer_city ? String(data.customer_city).trim() : null,

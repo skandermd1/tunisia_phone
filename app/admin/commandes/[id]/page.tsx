@@ -97,6 +97,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 <dt className="text-gray-500">Telephone</dt>
                 <dd className="font-medium text-gray-900">{order.customer_phone}</dd>
               </div>
+              {order.customer_email && (
+                <div>
+                  <dt className="text-gray-500">Email</dt>
+                  <dd className="font-medium text-gray-900">{order.customer_email}</dd>
+                </div>
+              )}
               {order.customer_address && (
                 <div>
                   <dt className="text-gray-500">Adresse</dt>

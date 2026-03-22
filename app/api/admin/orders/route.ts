@@ -28,7 +28,8 @@ export async function GET(request: NextRequest) {
         or(
           ilike(orders.orderNumber, `%${search}%`),
           ilike(orders.customerName, `%${search}%`),
-          ilike(orders.customerPhone, `%${search}%`)
+          ilike(orders.customerPhone, `%${search}%`),
+          ilike(orders.customerEmail, `%${search}%`)
         )!
       );
     }
@@ -48,6 +49,7 @@ export async function GET(request: NextRequest) {
         orderNumber: orders.orderNumber,
         customerName: orders.customerName,
         customerPhone: orders.customerPhone,
+        customerEmail: orders.customerEmail,
         customerAddress: orders.customerAddress,
         customerCity: orders.customerCity,
         customerGovernorate: orders.customerGovernorate,
@@ -71,6 +73,7 @@ export async function GET(request: NextRequest) {
         order_number: o.orderNumber,
         customer_name: o.customerName,
         customer_phone: o.customerPhone,
+        customer_email: o.customerEmail,
         customer_address: o.customerAddress,
         customer_city: o.customerCity,
         customer_governorate: o.customerGovernorate,

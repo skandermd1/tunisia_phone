@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ShoppingCart, Check } from "lucide-react";
 import type { Product, ProductVariant } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import VariantSelector from "@/components/products/VariantSelector";
 import ProductSpecs from "@/components/products/ProductSpecs";
+import { useCart } from "@/lib/cart-context";
 
 export default function ProductDetailClient({
   product,
@@ -19,6 +20,12 @@ export default function ProductDetailClient({
   const [selectedVariant, setSelectedVariant] =
     useState<ProductVariant | null>(defaultVariant || null);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [added, setAdded] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout>(undefined);
+  const { addItem } = useCart();
+
+  useEffect(() => { setAdded(false); }, [selectedVariant?.id]);
+  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const images =
     product.images && product.images.length > 0
@@ -169,18 +176,50 @@ export default function ProductDetailClient({
             />
           )}
 
-          {/* Commander button */}
+          {/* Add to Cart button */}
           {selectedVariant && (
-            <Link
-              href={`/commande?variant=${selectedVariant.id}&product=${product.slug}`}
-              className={`block text-center w-full py-3 rounded-md text-sm font-semibold transition-colors ${
-                selectedVariant.stock_status === "out_of_stock"
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed pointer-events-none"
-                  : "bg-forest hover:bg-forest-light text-white"
-              }`}
-            >
-              Commander
-            </Link>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  if (selectedVariant.stock_status === "out_of_stock") return;
+                  const variantLabel = [selectedVariant.ram, `${selectedVariant.storage}${selectedVariant.storage_unit}`]
+                    .filter(Boolean)
+                    .join(" / ");
+                  addItem({
+                    variantId: selectedVariant.id,
+                    productSlug: product.slug,
+                    productName: product.name,
+                    variantLabel,
+                    price: selectedVariant.price,
+                    originalPrice: selectedVariant.original_price,
+                    imageUrl: product.image_url,
+                  });
+                  clearTimeout(timerRef.current);
+                  setAdded(true);
+                  timerRef.current = setTimeout(() => setAdded(false), 2000);
+                }}
+                disabled={selectedVariant.stock_status === "out_of_stock"}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-md text-sm font-semibold transition-colors ${
+                  selectedVariant.stock_status === "out_of_stock"
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : added
+                      ? "bg-green-600 text-white"
+                      : "bg-forest hover:bg-forest-light text-white"
+                }`}
+              >
+                {added ? (
+                  <>
+                    <Check size={16} />
+                    Ajoute au panier
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart size={16} />
+                    Ajouter au panier
+                  </>
+                )}
+              </button>
+            </div>
           )}
 
           {/* Specs */}
