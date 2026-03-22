@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import ProductForm from '@/components/admin/ProductForm';
 import ToastContainer, { useToast } from '@/components/ui/Toast';
-import { adminGetProduct, adminUpdateProduct } from '@/lib/admin-api';
+import { adminGetProduct, adminUpdateProduct, adminUploadImages } from '@/lib/admin-api';
 import type { Product } from '@/lib/admin-api';
 
 const BRANDS = ['Samsung', 'Apple', 'Xiaomi', 'OPPO', 'Realme', 'Infinix', 'Tecno', 'Huawei', 'Honor', 'Nokia', 'Motorola', 'Autre'];
@@ -29,6 +29,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const handleUpload = async (files: File[]) => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) throw new Error('Non autorise');
+    return adminUploadImages(token, files);
+  };
 
   const handleSubmit = async (data: Partial<Product>) => {
     const token = localStorage.getItem('admin_token');
@@ -71,6 +77,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       <ProductForm
         initialData={product}
         onSubmit={handleSubmit}
+        onUploadImages={handleUpload}
         brands={BRANDS}
         categories={CATEGORIES}
       />

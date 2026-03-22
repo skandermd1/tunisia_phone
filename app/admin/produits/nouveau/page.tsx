@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import ProductForm from '@/components/admin/ProductForm';
 import ToastContainer, { useToast } from '@/components/ui/Toast';
-import { adminCreateProduct } from '@/lib/admin-api';
+import { adminCreateProduct, adminUploadImages } from '@/lib/admin-api';
 import type { Product } from '@/lib/admin-api';
 
 const BRANDS = ['Samsung', 'Apple', 'Xiaomi', 'OPPO', 'Realme', 'Infinix', 'Tecno', 'Huawei', 'Honor', 'Nokia', 'Motorola', 'Autre'];
@@ -14,6 +14,12 @@ const CATEGORIES = ['Telephones', 'Accessoires', 'Chargeurs', 'AirPods', 'Coques
 export default function NewProductPage() {
   const router = useRouter();
   const { toasts, addToast, dismissToast } = useToast();
+
+  const handleUpload = async (files: File[]) => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) throw new Error('Non autorise');
+    return adminUploadImages(token, files);
+  };
 
   const handleSubmit = async (data: Partial<Product>) => {
     const token = localStorage.getItem('admin_token');
@@ -36,6 +42,7 @@ export default function NewProductPage() {
 
       <ProductForm
         onSubmit={handleSubmit}
+        onUploadImages={handleUpload}
         brands={BRANDS}
         categories={CATEGORIES}
       />
