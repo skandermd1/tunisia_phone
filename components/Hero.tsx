@@ -8,8 +8,7 @@ const slides = [
     heading: "Téléphones Premium\n& Accessoires",
     description:
       "Votre destination unique pour les derniers smartphones et accessoires. Des téléphones haut de gamme aux AirPods, chargeurs et coques — nous avons tout ce qu'il vous faut. Commandez maintenant et faites-vous livrer à domicile.",
-    salePrice: "320",
-    originalPrice: "550",
+    tagline: "Jusqu'à 30% de réduction sur une sélection de smartphones",
     discount: "30%",
     image: "/images/hero-1.png",
   },
@@ -17,8 +16,7 @@ const slides = [
     heading: "Grandes Marques\n& Meilleurs Prix",
     description:
       "Découvrez notre collection de téléphones et accessoires Apple, Samsung, Google et bien plus. Qualité premium aux meilleurs prix en Tunisie. Livraison gratuite pour les commandes de plus de 200 TND.",
-    salePrice: "450",
-    originalPrice: "750",
+    tagline: "Jusqu'à 40% de réduction sur les accessoires premium",
     discount: "40%",
     image: "/images/hero-2.png",
   },
@@ -48,14 +46,9 @@ export default function Hero() {
             <p className="mt-5 text-gray-600 text-base leading-7 max-w-md">
               {slide.description}
             </p>
-            <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-3xl font-bold text-gray-900">
-                {slide.salePrice} <span className="text-lg">TND</span>
-              </span>
-              <span className="text-lg text-gray-400 line-through">
-                {slide.originalPrice} TND
-              </span>
-            </div>
+            <p className="mt-6 text-lg font-semibold text-forest">
+              {slide.tagline}
+            </p>
             <div className="mt-6 flex items-center gap-4">
               <button className="bg-forest hover:bg-forest-light text-white px-7 py-3 rounded-md text-sm font-semibold transition-colors">
                 Acheter Maintenant
@@ -67,7 +60,7 @@ export default function Hero() {
           </div>
 
           {/* Right Image */}
-          <div className="flex-1 relative min-h-[300px] md:min-h-[400px]">
+          <div className="flex-1 relative w-full min-h-[250px] sm:min-h-[300px] md:min-h-[400px]">
             <Image
               src={slide.image}
               alt="Téléphones et accessoires en vedette"
