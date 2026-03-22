@@ -115,6 +115,7 @@ export interface Product {
   specs: Record<string, string>;
   colors: string[];
   image_url: string;
+  images?: string[];
   badge?: string;
   variants: ProductVariant[];
   is_featured: boolean;
@@ -145,6 +146,34 @@ export async function adminUpdateProduct(token: string, id: string, data: Partia
     headers: authHeaders(token),
     body: JSON.stringify(data),
   });
+}
+
+export async function adminUploadImages(token: string, files: File[]): Promise<string[]> {
+  const formData = new FormData();
+  files.forEach((f) => formData.append('files', f));
+
+  const res = await fetch('/api/admin/upload', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (res.status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('admin_token');
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Non autorise');
+  }
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ message: 'Erreur upload' }));
+    throw new Error(error.message || `Erreur ${res.status}`);
+  }
+
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'Erreur upload');
+  return json.data.urls;
 }
 
 export async function adminDeleteProduct(token: string, id: string): Promise<void> {

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Plus, Trash2, Save } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, Trash2, Save, Upload, X, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 import type { Product, ProductVariant } from '@/lib/admin-api';
 
 interface ProductFormProps {
   initialData?: Product;
   onSubmit: (data: Partial<Product>) => Promise<void>;
+  onUploadImages: (files: File[]) => Promise<string[]>;
   brands: string[];
   categories: string[];
 }
@@ -26,7 +28,7 @@ const emptyVariant: ProductVariant = {
   original_price: undefined,
 };
 
-export default function ProductForm({ initialData, onSubmit, brands, categories }: ProductFormProps) {
+export default function ProductForm({ initialData, onSubmit, onUploadImages, brands, categories }: ProductFormProps) {
   const [name, setName] = useState(initialData?.name || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
   const [brand, setBrand] = useState(initialData?.brand || '');
@@ -38,7 +40,13 @@ export default function ProductForm({ initialData, onSubmit, brands, categories 
       : [{ key: '', value: '' }]
   );
   const [colors, setColors] = useState<string>(initialData?.colors?.join(', ') || '');
-  const [imageUrl, setImageUrl] = useState(initialData?.image_url || '');
+  const [imageUrls, setImageUrls] = useState<string[]>(
+    initialData?.images?.length
+      ? initialData.images
+      : initialData?.image_url ? [initialData.image_url] : []
+  );
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [badge, setBadge] = useState(initialData?.badge || '');
   const [variants, setVariants] = useState<ProductVariant[]>(
     initialData?.variants?.length ? initialData.variants : [{ ...emptyVariant }]
@@ -70,7 +78,8 @@ export default function ProductForm({ initialData, onSubmit, brands, categories 
         description,
         specs: specsObj,
         colors: colors.split(',').map((c) => c.trim()).filter(Boolean),
-        image_url: imageUrl,
+        image_url: imageUrls[0] || '',
+        images: imageUrls,
         badge: badge || undefined,
         variants,
         is_featured: isFeatured,
@@ -86,6 +95,25 @@ export default function ProductForm({ initialData, onSubmit, brands, categories 
     const next = [...specs];
     next[i] = { ...next[i], [field]: val };
     setSpecs(next);
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const urls = await onUploadImages(files);
+      setImageUrls((prev) => [...prev, ...urls]);
+    } catch {
+      // Parent page handles toast errors
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setImageUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addVariant = () => setVariants([...variants, { ...emptyVariant }]);
@@ -143,12 +171,53 @@ export default function ProductForm({ initialData, onSubmit, brands, categories 
 
       {/* Media & Badge */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Image et badge</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Images et badge</h3>
+
+        {/* Image upload */}
+        <div className="mb-4">
+          <label className={labelClass}>Images du produit</label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          {imageUrls.length > 0 && (
+            <div className="flex flex-wrap gap-3 mb-3">
+              {imageUrls.map((url, i) => (
+                <div key={url} className="relative group w-24 h-24 rounded-lg overflow-hidden border border-gray-200">
+                  <Image src={url} alt={`Image ${i + 1}`} fill className="object-cover" sizes="96px" />
+                  {i === 0 && (
+                    <span className="absolute bottom-0 left-0 right-0 bg-forest/80 text-white text-[10px] text-center py-0.5">
+                      Principale
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeImage(i)}
+                    className="absolute top-1 right-1 p-0.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:border-forest hover:text-forest transition-colors disabled:opacity-50"
+          >
+            {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+            {uploading ? 'Upload en cours...' : 'Ajouter des images'}
+          </button>
+          <p className="text-xs text-gray-400 mt-1">JPEG, PNG ou WebP. Max 5 Mo par fichier. La premiere image sera l&apos;image principale.</p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>URL de l&apos;image</label>
-            <input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} placeholder="https://..." />
-          </div>
           <div>
             <label className={labelClass}>Badge</label>
             <input type="text" value={badge} onChange={(e) => setBadge(e.target.value)} className={inputClass} placeholder="Nouveau, -20%, etc." />
