@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# image processing temp files
+scripts/tmp/
+scripts/processed/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
