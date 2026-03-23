@@ -9,8 +9,8 @@ export default function TopBar() {
         {/* Left - Phone */}
         <div className="flex items-center gap-2">
           <Phone size={14} />
-          <a href="tel:+21612345678" className="hover:underline">
-            +216 12 345 678
+          <a href="tel:+21694367714" className="hover:underline">
+            +216 94 367 714
           </a>
         </div>
 
