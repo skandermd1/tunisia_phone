@@ -16,11 +16,11 @@ export default function TopBar() {
 
         {/* Center - Promo */}
         <div className="hidden md:flex items-center gap-1">
-          <span>🎉</span>
+          <span>💰</span>
           <span>
-            Obtenez <strong>50% de réduction</strong> sur les articles sélectionnés |{" "}
-            <a href="#" className="underline font-semibold">
-              Achetez Maintenant
+            <strong>Les meilleurs prix</strong> en Tunisie |{" "}
+            <a href="/produits" className="underline font-semibold">
+              Achetez en toute confiance
             </a>
           </span>
         </div>
