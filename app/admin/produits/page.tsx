@@ -3,16 +3,17 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, EyeOff } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import ToastContainer, { useToast } from '@/components/ui/Toast';
-import { adminGetProducts, adminDeleteProduct } from '@/lib/admin-api';
+import { adminGetProducts, adminDeleteProduct, adminDeactivateProduct } from '@/lib/admin-api';
 import type { Product } from '@/lib/admin-api';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
+  const [showInactive, setShowInactive] = useState(false);
   const { toasts, addToast, dismissToast } = useToast();
 
   const fetchProducts = () => {
@@ -20,7 +21,7 @@ export default function ProductsPage() {
     if (!token) return;
 
     setLoading(true);
-    adminGetProducts(token)
+    adminGetProducts(token, { showInactive })
       .then(setProducts)
       .catch(() => addToast('error', 'Erreur lors du chargement des produits'))
       .finally(() => setLoading(false));
@@ -29,7 +30,7 @@ export default function ProductsPage() {
   useEffect(() => {
     fetchProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showInactive]);
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
@@ -40,16 +41,40 @@ export default function ProductsPage() {
       await adminDeleteProduct(token, deleteTarget.id);
       setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
       addToast('success', 'Produit supprime avec succes');
-    } catch {
-      addToast('error', 'Erreur lors de la suppression');
+    } catch (err) {
+      addToast('error', err instanceof Error ? err.message : 'Erreur lors de la suppression');
     }
     setDeleteTarget(null);
+  };
+
+  const handleDeactivate = async (product: Product) => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) return;
+
+    try {
+      await adminDeactivateProduct(token, product.id);
+      setProducts((prev) => prev.filter((p) => p.id !== product.id));
+      addToast('success', 'Produit desactive avec succes');
+    } catch (err) {
+      addToast('error', err instanceof Error ? err.message : 'Erreur lors de la desactivation');
+    }
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">{products.length} produit(s)</p>
+        <div className="flex items-center gap-4">
+          <p className="text-sm text-gray-500">{products.length} produit(s)</p>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showInactive}
+              onChange={(e) => setShowInactive(e.target.checked)}
+              className="w-4 h-4 rounded border-gray-300 text-forest focus:ring-forest"
+            />
+            <span className="text-sm text-gray-500">Afficher inactifs</span>
+          </label>
+        </div>
         <Link
           href="/admin/produits/nouveau"
           className="flex items-center gap-2 px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest-light transition-colors text-sm font-medium"
@@ -108,7 +133,7 @@ export default function ProductsPage() {
                         {Number(displayPrice).toFixed(2)} DT
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-700 hidden md:table-cell">
-                        {product.variants?.length ?? '-'}
+                        {product.variant_count ?? '-'}
                       </td>
                       <td className="py-3 px-4 hidden lg:table-cell">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -125,8 +150,18 @@ export default function ProductsPage() {
                           >
                             <Edit size={16} />
                           </Link>
+                          {product.is_active && (
+                            <button
+                              onClick={() => handleDeactivate(product)}
+                              title="Desactiver"
+                              className="p-1.5 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            >
+                              <EyeOff size={16} />
+                            </button>
+                          )}
                           <button
                             onClick={() => setDeleteTarget(product)}
+                            title="Supprimer definitivement"
                             className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           >
                             <Trash2 size={16} />

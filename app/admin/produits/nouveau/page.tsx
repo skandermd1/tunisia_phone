@@ -64,6 +64,7 @@ export default function NewProductPage() {
       <ProductForm
         onSubmit={handleSubmit}
         onUploadImages={handleUpload}
+        onError={(msg) => addToast('error', msg)}
         brands={brands}
         categories={categories}
       />

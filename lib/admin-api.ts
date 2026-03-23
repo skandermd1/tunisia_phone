@@ -121,13 +121,15 @@ export interface Product {
   badge?: string;
   variants?: ProductVariant[];
   default_price?: number | null;
+  variant_count?: number;
   is_featured: boolean;
   is_active: boolean;
   created_at: string;
 }
 
-export async function adminGetProducts(token: string): Promise<Product[]> {
-  const res = await adminFetch('/admin/products', { headers: authHeaders(token) });
+export async function adminGetProducts(token: string, opts?: { showInactive?: boolean }): Promise<Product[]> {
+  const query = opts?.showInactive ? '' : '?active=1';
+  const res = await adminFetch(`/admin/products${query}`, { headers: authHeaders(token) });
   return res.products;
 }
 
@@ -181,6 +183,13 @@ export async function adminUploadImages(token: string, files: File[]): Promise<s
 
 export async function adminDeleteProduct(token: string, id: string): Promise<void> {
   return adminFetch(`/admin/products/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
+}
+
+export async function adminDeactivateProduct(token: string, id: string): Promise<void> {
+  return adminFetch(`/admin/products/${id}?soft=1`, {
     method: 'DELETE',
     headers: authHeaders(token),
   });

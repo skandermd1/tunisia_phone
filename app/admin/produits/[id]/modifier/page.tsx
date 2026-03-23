@@ -17,6 +17,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const [brands, setBrands] = useState<{ id: number; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const { toasts, addToast, dismissToast } = useToast();
 
   useEffect(() => {
@@ -33,7 +34,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         setBrands(brandsData.map((b) => ({ id: b.id, name: b.name })));
         setCategories(categoriesData.map((c) => ({ id: c.id, name: c.name })));
       })
-      .catch(() => addToast('error', 'Erreur lors du chargement'))
+      .catch((err) => {
+        const msg = err instanceof Error ? err.message : 'Erreur lors du chargement';
+        setLoadError(msg);
+        addToast('error', msg);
+      })
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -68,7 +73,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   if (!product) {
     return (
       <div className="text-center py-20">
-        <p className="text-gray-500 mb-4">Produit introuvable</p>
+        <p className="text-gray-500 mb-4">{loadError || 'Produit introuvable'}</p>
         <Link href="/admin/produits" className="text-forest hover:underline">
           Retour aux produits
         </Link>
@@ -86,6 +91,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         initialData={product}
         onSubmit={handleSubmit}
         onUploadImages={handleUpload}
+        onError={(msg) => addToast('error', msg)}
         brands={brands}
         categories={categories}
       />

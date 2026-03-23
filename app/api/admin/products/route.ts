@@ -64,7 +64,8 @@ export async function GET(request: NextRequest) {
         brandName: brands.name,
         categoryId: products.categoryId,
         categoryName: categories.name,
-        defaultPrice: sql<string>`(SELECT pv.price FROM product_variants pv WHERE pv.product_id = ${products.id} AND pv.is_default = true LIMIT 1)`,
+        defaultPrice: sql<string>`(SELECT COALESCE((SELECT pv.price FROM product_variants pv WHERE pv.product_id = ${products.id} AND pv.is_default = true LIMIT 1), (SELECT MIN(pv.price) FROM product_variants pv WHERE pv.product_id = ${products.id})))`,
+        variantCount: sql<number>`(SELECT COUNT(*)::int FROM product_variants pv WHERE pv.product_id = ${products.id})`,
         createdAt: products.createdAt,
         updatedAt: products.updatedAt,
       })
@@ -95,6 +96,7 @@ export async function GET(request: NextRequest) {
         category_id: r.categoryId,
         category_name: r.categoryName,
         default_price: r.defaultPrice ? Number(r.defaultPrice) : null,
+        variant_count: r.variantCount ?? 0,
         created_at: r.createdAt,
         updated_at: r.updatedAt,
       })),

@@ -19,6 +19,7 @@ interface ProductFormProps {
   initialData?: Product;
   onSubmit: (data: Record<string, unknown>) => Promise<void>;
   onUploadImages: (files: File[]) => Promise<string[]>;
+  onError?: (msg: string) => void;
   brands: BrandOption[];
   categories: CategoryOption[];
 }
@@ -38,7 +39,7 @@ const emptyVariant: ProductVariant = {
   original_price: undefined,
 };
 
-export default function ProductForm({ initialData, onSubmit, onUploadImages, brands, categories }: ProductFormProps) {
+export default function ProductForm({ initialData, onSubmit, onUploadImages, onError, brands, categories }: ProductFormProps) {
   const [name, setName] = useState(initialData?.name || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
   const [brandId, setBrandId] = useState(initialData?.brand_id ? String(initialData.brand_id) : '');
@@ -114,8 +115,8 @@ export default function ProductForm({ initialData, onSubmit, onUploadImages, bra
     try {
       const urls = await onUploadImages(files);
       setImageUrls((prev) => [...prev, ...urls]);
-    } catch {
-      // Parent page handles toast errors
+    } catch (err) {
+      onError?.(err instanceof Error ? err.message : 'Erreur lors de l\'upload');
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';

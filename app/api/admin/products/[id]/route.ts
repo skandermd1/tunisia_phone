@@ -198,10 +198,26 @@ export async function DELETE(
   try {
     const { id: idStr } = await params;
     const id = Number(idStr);
+    const url = new URL(request.url);
+    const soft = url.searchParams.get("soft") === "1";
 
+    if (soft) {
+      const result = await db
+        .update(products)
+        .set({ isActive: false })
+        .where(eq(products.id, id))
+        .returning({ id: products.id });
+
+      if (result.length === 0) {
+        return errorResponse("Product not found", 404);
+      }
+
+      return jsonResponse({ id, deactivated: true });
+    }
+
+    // Hard delete — variants cascade automatically
     const result = await db
-      .update(products)
-      .set({ isActive: false })
+      .delete(products)
       .where(eq(products.id, id))
       .returning({ id: products.id });
 
@@ -210,7 +226,15 @@ export async function DELETE(
     }
 
     return jsonResponse({ id, deleted: true });
-  } catch (err) {
+  } catch (err: unknown) {
+    // Foreign key constraint — product has orders
+    const message = err instanceof Error ? err.message : "";
+    if (message.includes("violates foreign key constraint")) {
+      return errorResponse(
+        "Impossible de supprimer : ce produit est lie a des commandes existantes. Utilisez la desactivation.",
+        409
+      );
+    }
     console.error("DELETE /api/admin/products/[id] error:", err);
     return errorResponse("Internal server error", 500);
   }
