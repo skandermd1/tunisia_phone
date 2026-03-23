@@ -13,7 +13,6 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
-  const [showInactive, setShowInactive] = useState(false);
   const { toasts, addToast, dismissToast } = useToast();
 
   const fetchProducts = () => {
@@ -21,7 +20,7 @@ export default function ProductsPage() {
     if (!token) return;
 
     setLoading(true);
-    adminGetProducts(token, { showInactive })
+    adminGetProducts(token)
       .then(setProducts)
       .catch(() => addToast('error', 'Erreur lors du chargement des produits'))
       .finally(() => setLoading(false));
@@ -30,7 +29,7 @@ export default function ProductsPage() {
   useEffect(() => {
     fetchProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showInactive]);
+  }, []);
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
@@ -80,18 +79,7 @@ export default function ProductsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <p className="text-sm text-gray-500">{products.length} produit(s)</p>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showInactive}
-              onChange={(e) => setShowInactive(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-forest focus:ring-forest"
-            />
-            <span className="text-sm text-gray-500">Afficher inactifs</span>
-          </label>
-        </div>
+        <p className="text-sm text-gray-500">{products.length} produit(s)</p>
         <Link
           href="/admin/produits/nouveau"
           className="flex items-center gap-2 px-4 py-2 bg-forest text-white rounded-lg hover:bg-forest-light transition-colors text-sm font-medium"

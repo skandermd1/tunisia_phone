@@ -127,9 +127,8 @@ export interface Product {
   created_at: string;
 }
 
-export async function adminGetProducts(token: string, opts?: { showInactive?: boolean }): Promise<Product[]> {
-  const query = opts?.showInactive ? '' : '?active=1';
-  const res = await adminFetch(`/admin/products${query}`, { headers: authHeaders(token) });
+export async function adminGetProducts(token: string): Promise<Product[]> {
+  const res = await adminFetch('/admin/products', { headers: authHeaders(token) });
   return res.products;
 }
 
