@@ -1,6 +1,6 @@
 'use client';
 
-import { useSyncExternalStore, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
@@ -13,36 +13,28 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/produits/nouveau': 'Nouveau produit',
 };
 
-function getAdminToken() {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('admin_token');
-}
-
-function getAdminName() {
-  if (typeof window === 'undefined') return 'Admin';
-  return localStorage.getItem('admin_name') || 'Admin';
-}
-
-// Subscribe is a no-op since localStorage doesn't fire events in the same tab
-const subscribe = () => () => {};
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const token = useSyncExternalStore(subscribe, getAdminToken, () => null);
-  const storedName = useSyncExternalStore(subscribe, getAdminName, () => 'Admin');
+  const [token, setToken] = useState<string | null>(null);
+  const [storedName, setStoredName] = useState('Admin');
+  const [hydrated, setHydrated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { toasts, dismissToast } = useToast();
 
-  const isLoginPage = pathname === '/admin/login';
-  const authenticated = isLoginPage || !!token;
+  useEffect(() => {
+    setToken(localStorage.getItem('admin_token'));
+    setStoredName(localStorage.getItem('admin_name') || 'Admin');
+    setHydrated(true);
+  }, []);
 
-  if (!isLoginPage && !token) {
-    // Redirect on next tick to avoid setState-in-render issues
-    if (typeof window !== 'undefined') {
+  const isLoginPage = pathname === '/admin/login';
+
+  useEffect(() => {
+    if (hydrated && !isLoginPage && !token) {
       router.replace('/admin/login');
     }
-  }
+  }, [hydrated, isLoginPage, token, router]);
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('admin_token');
@@ -50,7 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.replace('/admin/login');
   }, [router]);
 
-  if (!authenticated) {
+  if (!hydrated || (!isLoginPage && !token)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream">
         <div className="text-gray-500">Chargement...</div>

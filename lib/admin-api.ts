@@ -194,3 +194,11 @@ export async function adminDeactivateProduct(token: string, id: string): Promise
     headers: authHeaders(token),
   });
 }
+
+export async function adminActivateProduct(token: string, id: string): Promise<void> {
+  return adminFetch(`/admin/products/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(token),
+    body: JSON.stringify({ is_active: true }),
+  });
+}

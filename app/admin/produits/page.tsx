@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Plus, Edit, Trash2, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, EyeOff, Eye } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import ToastContainer, { useToast } from '@/components/ui/Toast';
-import { adminGetProducts, adminDeleteProduct, adminDeactivateProduct } from '@/lib/admin-api';
+import { adminGetProducts, adminDeleteProduct, adminDeactivateProduct, adminActivateProduct } from '@/lib/admin-api';
 import type { Product } from '@/lib/admin-api';
 
 export default function ProductsPage() {
@@ -53,10 +53,27 @@ export default function ProductsPage() {
 
     try {
       await adminDeactivateProduct(token, product.id);
-      setProducts((prev) => prev.filter((p) => p.id !== product.id));
+      setProducts((prev) =>
+        prev.map((p) => (p.id === product.id ? { ...p, is_active: false } : p))
+      );
       addToast('success', 'Produit desactive avec succes');
     } catch (err) {
       addToast('error', err instanceof Error ? err.message : 'Erreur lors de la desactivation');
+    }
+  };
+
+  const handleActivate = async (product: Product) => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) return;
+
+    try {
+      await adminActivateProduct(token, product.id);
+      setProducts((prev) =>
+        prev.map((p) => (p.id === product.id ? { ...p, is_active: true } : p))
+      );
+      addToast('success', 'Produit active avec succes');
+    } catch (err) {
+      addToast('error', err instanceof Error ? err.message : "Erreur lors de l'activation");
     }
   };
 
@@ -150,13 +167,21 @@ export default function ProductsPage() {
                           >
                             <Edit size={16} />
                           </Link>
-                          {product.is_active && (
+                          {product.is_active ? (
                             <button
                               onClick={() => handleDeactivate(product)}
                               title="Desactiver"
                               className="p-1.5 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
                             >
                               <EyeOff size={16} />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleActivate(product)}
+                              title="Activer"
+                              className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            >
+                              <Eye size={16} />
                             </button>
                           )}
                           <button

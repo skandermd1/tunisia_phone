@@ -50,7 +50,11 @@ export default function ProductForm({ initialData, onSubmit, onUploadImages, onE
       ? Object.entries(initialData.specs).map(([key, value]) => ({ key, value }))
       : [{ key: '', value: '' }]
   );
-  const [colors, setColors] = useState<string>(initialData?.colors?.join(', ') || '');
+  const [colors, setColors] = useState<string>(
+    Array.isArray(initialData?.colors)
+      ? initialData.colors.join(', ')
+      : initialData?.colors || ''
+  );
   const [imageUrls, setImageUrls] = useState<string[]>(
     initialData?.images?.length
       ? initialData.images
