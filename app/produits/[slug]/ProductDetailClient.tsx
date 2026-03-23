@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, ShoppingCart, Check } from "lucide-react";
@@ -20,12 +20,11 @@ export default function ProductDetailClient({
   const [selectedVariant, setSelectedVariant] =
     useState<ProductVariant | null>(defaultVariant || null);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [added, setAdded] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout>(undefined);
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
 
-  useEffect(() => { setAdded(false); }, [selectedVariant?.id]);
-  useEffect(() => () => clearTimeout(timerRef.current), []);
+  const isInCart = selectedVariant
+    ? items.some((i) => i.variantId === selectedVariant.id)
+    : false;
 
   const images =
     product.images && product.images.length > 0
@@ -195,23 +194,20 @@ export default function ProductDetailClient({
                     originalPrice: selectedVariant.original_price,
                     imageUrl: product.image_url,
                   });
-                  clearTimeout(timerRef.current);
-                  setAdded(true);
-                  timerRef.current = setTimeout(() => setAdded(false), 2000);
                 }}
                 disabled={selectedVariant.stock_status === "out_of_stock"}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-md text-sm font-semibold transition-colors ${
                   selectedVariant.stock_status === "out_of_stock"
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : added
-                      ? "bg-green-600 text-white"
+                    : isInCart
+                      ? "bg-forest text-white"
                       : "bg-forest hover:bg-forest-light text-white"
                 }`}
               >
-                {added ? (
+                {isInCart ? (
                   <>
                     <Check size={16} />
-                    Ajoute au panier
+                    Ajouté au panier
                   </>
                 ) : (
                   <>
