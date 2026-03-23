@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   Menu,
   ChevronDown,
-  ArrowLeftRight,
   ShoppingCart,
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
@@ -32,17 +31,10 @@ export default function NavBar() {
           <Link href="/produits" className="hover:text-forest hover:underline transition-colors">
             Produits
           </Link>
-          <Link href="/suivi" className="hover:text-forest hover:underline transition-colors">
-            Suivi
-          </Link>
         </nav>
 
         {/* Right - Actions */}
         <div className="flex items-center gap-5 text-sm text-gray-600">
-          <Link href="/produits" className="hidden sm:flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
-            <ArrowLeftRight size={16} />
-            Comparer
-          </Link>
           <Link href="/panier" className="relative flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
             <ShoppingCart size={16} />
             Mon Panier

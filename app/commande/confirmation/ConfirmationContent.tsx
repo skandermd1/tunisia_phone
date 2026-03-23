@@ -33,14 +33,6 @@ export default function ConfirmationContent() {
       )}
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-        {orderNumber && (
-          <Link
-            href={`/suivi?order=${encodeURIComponent(orderNumber)}`}
-            className="bg-forest hover:bg-forest-light text-white px-6 py-2.5 rounded-md text-sm font-semibold transition-colors"
-          >
-            Suivre ma commande
-          </Link>
-        )}
         <Link
           href="/produits"
           className="border border-gray-200 text-gray-700 hover:bg-gray-50 px-6 py-2.5 rounded-md text-sm font-semibold transition-colors"

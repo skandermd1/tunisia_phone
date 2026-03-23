@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCcw, CalendarDays, Truck, Search } from "lucide-react";
+import { RotateCcw, CalendarDays, Search } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -62,10 +62,6 @@ export default function Header() {
           <Link href="/commande" className="flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
             <CalendarDays size={16} />
             Commande
-          </Link>
-          <Link href="/suivi" className="flex items-center gap-1.5 hover:text-forest hover:underline transition-colors">
-            <Truck size={16} />
-            Suivi de commande
           </Link>
         </div>
       </div>

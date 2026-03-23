@@ -46,7 +46,6 @@ export default function Footer() {
               <li><Link href="/" className="hover:text-white transition-colors">Accueil</Link></li>
               <li><Link href="/produits" className="hover:text-white transition-colors">Produits</Link></li>
               <li><Link href="/commande" className="hover:text-white transition-colors">Commander</Link></li>
-              <li><Link href="/suivi" className="hover:text-white transition-colors">Suivi de commande</Link></li>
             </ul>
           </div>
 
@@ -66,7 +65,6 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Service Client</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/suivi" className="hover:text-white transition-colors">Suivi de Commande</Link></li>
               <li><Link href="/produits" className="hover:text-white transition-colors">Tous les Produits</Link></li>
             </ul>
           </div>

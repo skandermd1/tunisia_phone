@@ -59,27 +59,6 @@ export interface OrderPayload {
   items: OrderItem[];
 }
 
-export interface OrderDetailItem {
-  id: number;
-  product_name: string;
-  variant_label: string;
-  price: number;
-  quantity: number;
-  subtotal: number;
-}
-
-export interface Order {
-  id: number;
-  order_number: string;
-  customer_name: string;
-  customer_email?: string;
-  customer_phone: string;
-  customer_address: string;
-  status: string;
-  items: OrderDetailItem[];
-  created_at: string;
-}
-
 export interface Pagination {
   total: number;
   page: number;
@@ -103,4 +82,3 @@ export interface OrderResponse {
   message: string;
 }
 
-export type OrderTrackingResponse = Order;

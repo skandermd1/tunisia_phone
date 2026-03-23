@@ -5,7 +5,6 @@ import type {
   BrandsResponse,
   OrderPayload,
   OrderResponse,
-  OrderTrackingResponse,
 } from "./types";
 
 async function fetchAPI<T>(
@@ -70,11 +69,5 @@ export async function createOrder(
     method: "POST",
     body: JSON.stringify(data),
   });
-}
-
-export async function trackOrder(
-  orderNumber: string
-): Promise<OrderTrackingResponse> {
-  return fetchAPI<OrderTrackingResponse>(`/orders/track/${orderNumber}`);
 }
 
