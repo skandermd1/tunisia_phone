@@ -8,14 +8,14 @@ import ProductForm from '@/components/admin/ProductForm';
 import ToastContainer, { useToast } from '@/components/ui/Toast';
 import { adminGetProduct, adminUpdateProduct, adminUploadImages } from '@/lib/admin-api';
 import type { Product } from '@/lib/admin-api';
-
-const BRANDS = ['Samsung', 'Apple', 'Xiaomi', 'OPPO', 'Realme', 'Infinix', 'Tecno', 'Huawei', 'Honor', 'Nokia', 'Motorola', 'Autre'];
-const CATEGORIES = ['Telephones', 'Accessoires', 'Chargeurs', 'AirPods', 'Coques', 'Cables', 'Tablettes'];
+import { getBrands, getCategories } from '@/lib/api';
 
 export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
+  const [brands, setBrands] = useState<{ id: number; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const { toasts, addToast, dismissToast } = useToast();
 
@@ -23,9 +23,17 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     const token = localStorage.getItem('admin_token');
     if (!token) return;
 
-    adminGetProduct(token, id)
-      .then(setProduct)
-      .catch(() => addToast('error', 'Produit introuvable'))
+    Promise.all([
+      adminGetProduct(token, id),
+      getBrands(),
+      getCategories(),
+    ])
+      .then(([productData, brandsData, categoriesData]) => {
+        setProduct(productData);
+        setBrands(brandsData.map((b) => ({ id: b.id, name: b.name })));
+        setCategories(categoriesData.map((c) => ({ id: c.id, name: c.name })));
+      })
+      .catch(() => addToast('error', 'Erreur lors du chargement'))
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -36,12 +44,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     return adminUploadImages(token, files);
   };
 
-  const handleSubmit = async (data: Partial<Product>) => {
+  const handleSubmit = async (data: Record<string, unknown>) => {
     const token = localStorage.getItem('admin_token');
     if (!token) return;
 
     try {
-      await adminUpdateProduct(token, id, data);
+      await adminUpdateProduct(token, id, data as Partial<Product>);
       addToast('success', 'Produit mis a jour avec succes');
       setTimeout(() => router.push('/admin/produits'), 1000);
     } catch (err) {
@@ -78,8 +86,8 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         initialData={product}
         onSubmit={handleSubmit}
         onUploadImages={handleUpload}
-        brands={BRANDS}
-        categories={CATEGORIES}
+        brands={brands}
+        categories={categories}
       />
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />

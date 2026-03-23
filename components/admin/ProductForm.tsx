@@ -5,12 +5,22 @@ import { Plus, Trash2, Save, Upload, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import type { Product, ProductVariant } from '@/lib/admin-api';
 
+interface BrandOption {
+  id: number;
+  name: string;
+}
+
+interface CategoryOption {
+  id: number;
+  name: string;
+}
+
 interface ProductFormProps {
   initialData?: Product;
-  onSubmit: (data: Partial<Product>) => Promise<void>;
+  onSubmit: (data: Record<string, unknown>) => Promise<void>;
   onUploadImages: (files: File[]) => Promise<string[]>;
-  brands: string[];
-  categories: string[];
+  brands: BrandOption[];
+  categories: CategoryOption[];
 }
 
 function slugify(text: string): string {
@@ -31,8 +41,8 @@ const emptyVariant: ProductVariant = {
 export default function ProductForm({ initialData, onSubmit, onUploadImages, brands, categories }: ProductFormProps) {
   const [name, setName] = useState(initialData?.name || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
-  const [brand, setBrand] = useState(initialData?.brand || '');
-  const [category, setCategory] = useState(initialData?.category || '');
+  const [brandId, setBrandId] = useState(initialData?.brand_id ? String(initialData.brand_id) : '');
+  const [categoryId, setCategoryId] = useState(initialData?.category_id ? String(initialData.category_id) : '');
   const [description, setDescription] = useState(initialData?.description || '');
   const [specs, setSpecs] = useState<Array<{ key: string; value: string }>>(
     initialData?.specs
@@ -73,11 +83,11 @@ export default function ProductForm({ initialData, onSubmit, onUploadImages, bra
       await onSubmit({
         name,
         slug,
-        brand,
-        category,
+        brand_id: Number(brandId),
+        category_id: Number(categoryId),
         description,
         specs: specsObj,
-        colors: colors.split(',').map((c) => c.trim()).filter(Boolean),
+        colors: colors.split(',').map((c: string) => c.trim()).filter(Boolean),
         image_url: imageUrls[0] || '',
         images: imageUrls,
         badge: badge || undefined,
@@ -150,16 +160,16 @@ export default function ProductForm({ initialData, onSubmit, onUploadImages, bra
           </div>
           <div>
             <label className={labelClass}>Marque *</label>
-            <select value={brand} onChange={(e) => setBrand(e.target.value)} required className={inputClass}>
+            <select value={brandId} onChange={(e) => setBrandId(e.target.value)} required className={inputClass}>
               <option value="">Selectionner...</option>
-              {brands.map((b) => <option key={b} value={b}>{b}</option>)}
+              {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
             </select>
           </div>
           <div>
             <label className={labelClass}>Categorie *</label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)} required className={inputClass}>
+            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required className={inputClass}>
               <option value="">Selectionner...</option>
-              {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div className="md:col-span-2">

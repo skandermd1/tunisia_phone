@@ -46,7 +46,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     setMessage('');
     try {
       const updated = await adminUpdateOrderStatus(token, order.id, newStatus);
-      setOrder(updated);
+      setOrder({ ...order, status: updated.status });
       setMessage('Statut mis a jour avec succes');
     } catch {
       setMessage('Erreur lors de la mise a jour');

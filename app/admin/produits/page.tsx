@@ -83,9 +83,7 @@ export default function ProductsPage() {
               </thead>
               <tbody>
                 {products.map((product) => {
-                  const minPrice = product.variants.length > 0
-                    ? Math.min(...product.variants.map((v) => v.price))
-                    : 0;
+                  const displayPrice = product.default_price ?? 0;
                   return (
                     <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-3 px-4">
@@ -103,14 +101,14 @@ export default function ProductsPage() {
                       </td>
                       <td className="py-3 px-4">
                         <p className="text-sm font-medium text-gray-900">{product.name}</p>
-                        <p className="text-xs text-gray-500">{product.category}</p>
+                        <p className="text-xs text-gray-500">{product.category_name}</p>
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-700 hidden sm:table-cell">{product.brand}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700 hidden sm:table-cell">{product.brand_name}</td>
                       <td className="py-3 px-4 text-sm font-medium text-gray-900 hidden md:table-cell">
-                        {minPrice.toFixed(2)} DT
+                        {Number(displayPrice).toFixed(2)} DT
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-700 hidden md:table-cell">
-                        {product.variants.length}
+                        {product.variants?.length ?? '-'}
                       </td>
                       <td className="py-3 px-4 hidden lg:table-cell">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${

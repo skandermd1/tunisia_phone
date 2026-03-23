@@ -88,7 +88,7 @@ export async function adminGetOrder(token: string, orderId: string): Promise<Ord
   return adminFetch(`/admin/orders/${orderId}`, { headers: authHeaders(token) });
 }
 
-export async function adminUpdateOrderStatus(token: string, orderId: string, status: string): Promise<Order> {
+export async function adminUpdateOrderStatus(token: string, orderId: string, status: string): Promise<{ id: number; status: string }> {
   return adminFetch(`/admin/orders/${orderId}/status`, {
     method: 'PUT',
     headers: authHeaders(token),
@@ -109,15 +109,18 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  brand: string;
-  category: string;
+  brand_id: number;
+  brand_name: string;
+  category_id: number;
+  category_name: string;
   description: string;
   specs: Record<string, string>;
   colors: string[];
   image_url: string;
   images?: string[];
   badge?: string;
-  variants: ProductVariant[];
+  variants?: ProductVariant[];
+  default_price?: number | null;
   is_featured: boolean;
   is_active: boolean;
   created_at: string;
