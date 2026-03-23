@@ -10,6 +10,36 @@ import VariantSelector from "@/components/products/VariantSelector";
 import ProductSpecs from "@/components/products/ProductSpecs";
 import { useCart } from "@/lib/cart-context";
 
+const colorMap: Record<string, string> = {
+  "Noir": "#1a1a1a",
+  "Bleu": "#2563eb",
+  "Lilas": "#c084fc",
+  "Vert": "#16a34a",
+  "Bleu Clair": "#7dd3fc",
+  "Jaune": "#facc15",
+  "Or": "#d4a017",
+  "Noir Titane": "#2d2d2d",
+  "Bleu Titane": "#4a6d8c",
+  "Gris Titane": "#8a8d8f",
+  "Argent Titane": "#c0c0c0",
+  "Vert Titane": "#4a6d5c",
+  "Vert Menthe": "#3eb489",
+  "Bleu Marine": "#001f5b",
+  "Argent": "#c0c0c0",
+  "Noir Volcanique": "#36393b",
+  "Bleu Glacier": "#6ba3be",
+  "Rose": "#f472b6",
+  "Bleu Ocean": "#0077b6",
+  "Violet": "#7c3aed",
+  "Orange": "#f97316",
+  "Blanc": "#ffffff",
+  "Bleu Etoile": "#1e3a5f",
+  "Titanium": "#878681",
+  "Bleu Ciel": "#87ceeb",
+  "Vert Foret": "#228b22",
+  "Vert Olive": "#6b8e23",
+};
+
 export default function ProductDetailClient({
   product,
 }: {
@@ -154,14 +184,16 @@ export default function ProductDetailClient({
               <h3 className="font-semibold text-gray-900 text-sm mb-2">
                 Couleurs disponibles
               </h3>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 {product.colors.map((color) => (
-                  <span
-                    key={color}
-                    className="w-7 h-7 rounded-full border-2 border-gray-200"
-                    style={{ backgroundColor: color }}
-                    title={color}
-                  />
+                  <div key={color} className="flex flex-col items-center gap-1">
+                    <span
+                      className={`w-7 h-7 rounded-full border-2 ${color === "Blanc" ? "border-gray-300" : "border-gray-200"}`}
+                      style={{ backgroundColor: colorMap[color] || color }}
+                      title={color}
+                    />
+                    <span className="text-xs text-gray-500">{color}</span>
+                  </div>
                 ))}
               </div>
             </div>
