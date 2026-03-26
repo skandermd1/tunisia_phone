@@ -31,10 +31,20 @@ function authHeaders(token: string) {
 
 // Auth
 export async function adminLogin(username: string, password: string): Promise<{ token: string; admin: { id: string; username: string; name: string } }> {
-  return adminFetch('/admin/login', {
+  const res = await fetch('/api/admin/login', {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ error: 'Erreur serveur' }));
+    throw new Error(data.error || `Erreur ${res.status}`);
+  }
+
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'Erreur de connexion');
+  return json.data;
 }
 
 // Dashboard

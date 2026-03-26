@@ -26,7 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setToken(localStorage.getItem('admin_token'));
     setStoredName(localStorage.getItem('admin_name') || 'Admin');
     setHydrated(true);
-  }, []);
+  }, [pathname]);
 
   const isLoginPage = pathname === '/admin/login';
 
