@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { products, brands, categories, productVariants } from "@/db/schema";
-import { eq, and, ilike, or, sql, count } from "drizzle-orm";
+import { eq, and, ilike, or, sql, count, inArray } from "drizzle-orm";
 import { jsonResponse, errorResponse } from "@/lib/api-helpers";
 import { NextRequest } from "next/server";
 
@@ -12,14 +12,22 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
     const featured = searchParams.get("featured");
     const sort = searchParams.get("sort");
+    const minPrice = searchParams.get("min_price");
+    const maxPrice = searchParams.get("max_price");
     const page = Math.max(1, Number(searchParams.get("page")) || 1);
     const perPage = Math.min(100, Math.max(1, Number(searchParams.get("per_page")) || 20));
     const offset = (page - 1) * perPage;
 
     // Build conditions
     const conditions = [eq(products.isActive, true)];
-    if (brand) conditions.push(eq(brands.slug, brand));
-    if (category) conditions.push(eq(categories.slug, category));
+    if (brand) {
+      const slugs = brand.split(",").filter(Boolean);
+      conditions.push(slugs.length === 1 ? eq(brands.slug, slugs[0]) : inArray(brands.slug, slugs));
+    }
+    if (category) {
+      const slugs = category.split(",").filter(Boolean);
+      conditions.push(slugs.length === 1 ? eq(categories.slug, slugs[0]) : inArray(categories.slug, slugs));
+    }
     if (search) {
       conditions.push(
         or(
@@ -29,6 +37,16 @@ export async function GET(request: NextRequest) {
       );
     }
     if (featured === "1") conditions.push(eq(products.isFeatured, true));
+    if (minPrice && !isNaN(Number(minPrice))) {
+      conditions.push(
+        sql`(SELECT pv.price FROM product_variants pv WHERE pv.product_id = ${products.id} AND pv.is_default = true LIMIT 1) >= ${Number(minPrice)}`
+      );
+    }
+    if (maxPrice && !isNaN(Number(maxPrice))) {
+      conditions.push(
+        sql`(SELECT pv.price FROM product_variants pv WHERE pv.product_id = ${products.id} AND pv.is_default = true LIMIT 1) <= ${Number(maxPrice)}`
+      );
+    }
 
     const where = and(...conditions);
 

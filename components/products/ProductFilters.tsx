@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 import type { Brand, Category } from "@/lib/types";
+import { VALID_PRODUCT_PARAMS } from "@/lib/api";
 
 interface ProductFiltersProps {
   brands: Brand[];
@@ -23,9 +24,24 @@ export default function ProductFilters({
   const minPrice = searchParams.get("min_price") ?? "";
   const maxPrice = searchParams.get("max_price") ?? "";
 
+  // Debounced local state for price inputs
+  const [localMinPrice, setLocalMinPrice] = useState(minPrice);
+  const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Sync URL → local when URL params change externally (e.g. clear filters)
+  useEffect(() => { setLocalMinPrice(minPrice); }, [minPrice]);
+  useEffect(() => { setLocalMaxPrice(maxPrice); }, [maxPrice]);
+
   const updateParams = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams();
+      // Only copy valid params, stripping garbage keys
+      searchParams.forEach((value, key) => {
+        if (VALID_PRODUCT_PARAMS.has(key) && value) {
+          params.set(key, value);
+        }
+      });
       Object.entries(updates).forEach(([key, value]) => {
         if (value === null || value === "") {
           params.delete(key);
@@ -39,6 +55,15 @@ export default function ProductFilters({
     },
     [router, searchParams]
   );
+
+  function updatePriceDebounced(key: "min_price" | "max_price", value: string) {
+    if (key === "min_price") setLocalMinPrice(value);
+    else setLocalMaxPrice(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      updateParams({ [key]: value || null });
+    }, 500);
+  }
 
   function toggleFilter(key: "brand" | "category", slug: string) {
     const current = key === "brand" ? selectedBrands : selectedCategories;
@@ -139,16 +164,16 @@ export default function ProductFilters({
           <input
             type="number"
             placeholder="Min"
-            value={minPrice}
-            onChange={(e) => updateParams({ min_price: e.target.value || null })}
+            value={localMinPrice}
+            onChange={(e) => updatePriceDebounced("min_price", e.target.value)}
             className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-forest"
           />
           <span className="text-gray-400">-</span>
           <input
             type="number"
             placeholder="Max"
-            value={maxPrice}
-            onChange={(e) => updateParams({ max_price: e.target.value || null })}
+            value={localMaxPrice}
+            onChange={(e) => updatePriceDebounced("max_price", e.target.value)}
             className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-forest"
           />
         </div>

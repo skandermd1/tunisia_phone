@@ -33,6 +33,11 @@ async function fetchAPI<T>(
   return json.data as T;
 }
 
+export const VALID_PRODUCT_PARAMS = new Set([
+  "brand", "category", "search", "min_price", "max_price",
+  "sort", "page", "per_page", "featured",
+]);
+
 // ── Public endpoints ──
 
 export async function getProducts(

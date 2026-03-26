@@ -1,8 +1,8 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getProducts, getCategories, getBrands } from "@/lib/api";
+import { getProducts, getCategories, getBrands, VALID_PRODUCT_PARAMS } from "@/lib/api";
 import type { Product, Brand, Category, Pagination as PaginationType } from "@/lib/types";
 import ProductGrid from "@/components/products/ProductGrid";
 import ProductFilters from "@/components/products/ProductFilters";
@@ -11,6 +11,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function ProductListingContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -35,7 +36,9 @@ export default function ProductListingContent() {
     setLoading(true);
     const params: Record<string, string> = {};
     searchParams.forEach((value, key) => {
-      params[key] = value;
+      if (VALID_PRODUCT_PARAMS.has(key) && value) {
+        params[key] = value;
+      }
     });
 
     getProducts(params)
@@ -51,11 +54,14 @@ export default function ProductListingContent() {
   }, [searchParams]);
 
   function handlePageChange(page: number) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      if (VALID_PRODUCT_PARAMS.has(key) && value) {
+        params.set(key, value);
+      }
+    });
     params.set("page", String(page));
-    window.history.pushState(null, "", `/produits?${params.toString()}`);
-    // Trigger re-render via location change
-    window.dispatchEvent(new PopStateEvent("popstate"));
+    router.push(`/produits?${params.toString()}`, { scroll: false });
   }
 
   return (
