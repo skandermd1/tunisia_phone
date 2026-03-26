@@ -19,6 +19,24 @@ export default function ProductListingContent() {
   const [pagination, setPagination] = useState<PaginationType | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Strip garbage query params from browser URL on mount so Next.js router works correctly
+  useEffect(() => {
+    let hasGarbage = false;
+    const clean = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      if (VALID_PRODUCT_PARAMS.has(key) && value) {
+        clean.set(key, value);
+      } else {
+        hasGarbage = true;
+      }
+    });
+    if (hasGarbage) {
+      const query = clean.toString();
+      window.history.replaceState(window.history.state, "", `/produits${query ? `?${query}` : ""}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Load brands and categories once
   useEffect(() => {
     Promise.all([getCategories(), getBrands()])
