@@ -1,18 +1,15 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Smartphone } from 'lucide-react';
 import LoginForm from '@/components/admin/LoginForm';
 import { adminLogin } from '@/lib/admin-api';
 
 export default function AdminLoginPage() {
-  const router = useRouter();
-
   const handleLogin = async (username: string, password: string) => {
     const result = await adminLogin(username, password);
     localStorage.setItem('admin_token', result.token);
     localStorage.setItem('admin_name', result.admin.name);
-    router.replace('/admin');
+    window.location.href = '/admin';
   };
 
   return (
