@@ -11,6 +11,8 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/commandes': 'Commandes',
   '/admin/produits': 'Produits',
   '/admin/produits/nouveau': 'Nouveau produit',
+  '/admin/marques': 'Marques',
+  '/admin/categories': 'Categories',
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
