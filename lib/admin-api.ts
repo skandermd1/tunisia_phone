@@ -211,3 +211,76 @@ export async function adminActivateProduct(token: string, id: string): Promise<v
     body: JSON.stringify({ is_active: true }),
   });
 }
+
+// Brands
+export interface Brand {
+  id: number;
+  name: string;
+  slug: string;
+  sort_order: number;
+  product_count: number;
+}
+
+export async function adminGetBrands(token: string): Promise<Brand[]> {
+  return adminFetch('/brands', { headers: authHeaders(token) });
+}
+
+export async function adminCreateBrand(token: string, data: { name: string; slug: string; sort_order?: number }): Promise<Brand> {
+  return adminFetch('/brands', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function adminUpdateBrand(token: string, id: number, data: Partial<{ name: string; slug: string; sort_order: number }>): Promise<Brand> {
+  return adminFetch(`/brands/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function adminDeleteBrand(token: string, id: number): Promise<void> {
+  return adminFetch(`/brands/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
+}
+
+// Categories
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  icon?: string | null;
+  sort_order: number;
+  product_count: number;
+}
+
+export async function adminGetCategories(token: string): Promise<Category[]> {
+  return adminFetch('/categories', { headers: authHeaders(token) });
+}
+
+export async function adminCreateCategory(token: string, data: { name: string; slug: string; icon?: string; sort_order?: number }): Promise<Category> {
+  return adminFetch('/categories', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function adminUpdateCategory(token: string, id: number, data: Partial<{ name: string; slug: string; icon: string | null; sort_order: number }>): Promise<Category> {
+  return adminFetch(`/categories/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function adminDeleteCategory(token: string, id: number): Promise<void> {
+  return adminFetch(`/categories/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
+}
